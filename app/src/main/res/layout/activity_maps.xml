@@ -5,4 +5,12 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.peterlzhou.pokedex.MapsActivity" />
+    tools:context="com.peterlzhou.pokedex.MapsActivity">
+    <Button
+        android:id="@+id/ping_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/PingButton"
+        android:layout_marginBottom="20dp"/>
+    </fragment>
