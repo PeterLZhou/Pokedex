@@ -6,11 +6,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.peterlzhou.pokedex.MapsActivity">
-    <Button
-        android:id="@+id/ping_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/PingButton"
-        android:layout_marginBottom="20dp"/>
+    <!--TODO: Fix button and EditText position, fix background color, make view larger, implement autocomplete for the pokemon-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@android:color/white"
+            >
+            <EditText
+                android:id="@+id/pokemon_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/askpokemon"
+                android:inputType="text" />
+            <Button
+                android:id="@+id/ping_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/PingButton" />
+        </LinearLayout>
     </fragment>

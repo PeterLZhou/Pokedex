@@ -50,6 +50,14 @@ public class MapsActivity extends AppCompatActivity implements
 
         mFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mFragment.getMapAsync(this);
+        Button PingButton = (Button) findViewById(R.id.ping_button);
+        PingButton.setOnClickListener(
+                new Button.OnClickListener(){
+                    public void onClick(View v){
+                        sendMarker(v);
+                    }
+                }
+        );
     }
 
     @Override
@@ -104,7 +112,8 @@ public class MapsActivity extends AppCompatActivity implements
             //Specify qualities of the marker we are creating
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
-            markerOptions.title("Current Position");
+            markerOptions.title("You");
+            //TODO: Set custom bitmap to trainer at your location
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
             //Add the marker to the map
             currLocationMarker = mGoogleMap.addMarker(markerOptions);
@@ -160,5 +169,10 @@ public class MapsActivity extends AppCompatActivity implements
         //If you only need one location, unregister the listener
         //LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 
+    }
+
+    public void sendMarker(View v){
+        //TODO: Implement firebase messaging to send marker details to the server
+        return;
     }
 }
