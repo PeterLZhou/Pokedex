@@ -13,7 +13,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,19 +45,194 @@ public class MapsActivity extends AppCompatActivity implements
     GoogleMap mGoogleMap;
     SupportMapFragment mFragment;
     Marker currLocationMarker;
+    AutoCompleteTextView pokemon_name;
+
+    private static final String[] POKEMON = new String[]{
+            "Bulbasaur",
+            "Ivysaur",
+            "Venusaur",
+            "Charmander",
+            "Charmeleon",
+            "Charizard",
+            "Squirtle",
+            "Wartortle",
+            "Blastoise",
+            "Caterpie",
+            "Metapod",
+            "Butterfree",
+            "Weedle",
+            "Kakuna",
+            "Beedrill",
+            "Pidgey",
+            "Pidgeotto",
+            "Pidgeot",
+            "Rattata",
+            "Raticate",
+            "Spearow",
+            "Fearow",
+            "Ekans",
+            "Arbok",
+            "Pikachu",
+            "Raichu",
+            "Sandshrew",
+            "Sandslash",
+            "Nidoran♀",
+            "Nidorina",
+            "Nidoqueen",
+            "Nidoran♂",
+            "Nidorino",
+            "Nidoking",
+            "Clefairy",
+            "Clefable",
+            "Vulpix",
+            "Ninetales",
+            "Jigglypuff",
+            "Wigglytuff",
+            "Zubat",
+            "Golbat",
+            "Oddish",
+            "Gloom",
+            "Vileplume",
+            "Paras",
+            "Parasect",
+            "Venonat",
+            "Venomoth",
+            "Diglett",
+            "Dugtrio",
+            "Meowth",
+            "Persian",
+            "Psyduck",
+            "Golduck",
+            "Mankey",
+            "Primeape",
+            "Growlithe",
+            "Arcanine",
+            "Poliwag",
+            "Poliwhirl",
+            "Poliwrath",
+            "Abra",
+            "Kadabra",
+            "Alakazam",
+            "Machop",
+            "Machoke",
+            "Machamp",
+            "Bellsprout",
+            "Weepinbell",
+            "Victreebel",
+            "Tentacool",
+            "Tentacruel",
+            "Geodude",
+            "Graveler",
+            "Golem",
+            "Ponyta",
+            "Rapidash",
+            "Slowpoke",
+            "Slowbro",
+            "Magnemite",
+            "Magneton",
+            "Farfetch'd",
+            "Doduo",
+            "Dodrio",
+            "Seel",
+            "Dewgong",
+            "Grimer",
+            "Muk",
+            "Shellder",
+            "Cloyster",
+            "Gastly",
+            "Haunter",
+            "Gengar",
+            "Onix",
+            "Drowzee",
+            "Hypno",
+            "Krabby",
+            "Kingler",
+            "Voltorb",
+            "Electrode",
+            "Exeggcute",
+            "Exeggutor",
+            "Cubone",
+            "Marowak",
+            "Hitmonlee",
+            "Hitmonchan",
+            "Lickitung",
+            "Koffing",
+            "Weezing",
+            "Rhyhorn",
+            "Rhydon",
+            "Chansey",
+            "Tangela",
+            "Kangaskhan",
+            "Horsea",
+            "Seadra",
+            "Goldeen",
+            "Seaking",
+            "Staryu",
+            "Starmie",
+            "Mr. Mime",
+            "Scyther",
+            "Jynx",
+            "Electabuzz",
+            "Magmar",
+            "Pinsir",
+            "Tauros",
+            "Magikarp",
+            "Gyarados",
+            "Lapras",
+            "Ditto",
+            "Eevee",
+            "Vaporeon",
+            "Jolteon",
+            "Flareon",
+            "Porygon",
+            "Omanyte",
+            "Omastar",
+            "Kabuto",
+            "Kabutops",
+            "Aerodactyl",
+            "Snorlax",
+            "Articuno",
+            "Zapdos",
+            "Moltres",
+            "Dratini",
+            "Dragonair",
+            "Dragonite",
+            "Mewtwo"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        //Loads up the maps fragment
         mFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mFragment.getMapAsync(this);
+
+        //Loads up the autocomplete text box
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, POKEMON);
+        pokemon_name = (AutoCompleteTextView)  findViewById(R.id.pokemon_name);
+        pokemon_name.setAdapter(adapter);
+
+        //Handles Button Clicks, Sends POST request, unfocuses keyboard, and gives Toast message if valid, Gives Toast message if invalid
         Button PingButton = (Button) findViewById(R.id.ping_button);
         PingButton.setOnClickListener(
                 new Button.OnClickListener(){
                     public void onClick(View v){
                         sendMarker(v);
+                    }
+                }
+        );
+
+        //Zoom into your current location when you're ready to enter your pokemon name
+        EditText PokemonName = (EditText) findViewById(R.id.pokemon_name);
+        PokemonName.setOnClickListener(
+                new EditText.OnClickListener(){
+                    public void onClick(View v){
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(latLng).zoom(14).build();
+                        mGoogleMap.animateCamera(CameraUpdateFactory
+                                .newCameraPosition(cameraPosition));
                     }
                 }
         );
@@ -169,9 +347,35 @@ public class MapsActivity extends AppCompatActivity implements
         //LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 
     }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        findViewById(R.id.map).requestFocus();
+    }
 
     public void sendMarker(View v){
-        //TODO: Implement firebase messaging to send marker details to the server
-        return;
+        pokemon_name = (AutoCompleteTextView) findViewById(R.id.pokemon_name);
+        String pokemonstring = pokemon_name.getText().toString();
+        //Correct Pokemon, send the POST request, unfocus the keyboard, and give a toast or some popup message
+        if (validPokemon(pokemonstring)){
+            Toast.makeText(this,"Valid Pokemon!",Toast.LENGTH_SHORT).show();
+        }
+        //Incorrect pokemon, give a toast
+        else{
+            Toast.makeText(this,"Invalid Pokemon!",Toast.LENGTH_SHORT).show();
+        }
+
     }
+
+    protected boolean validPokemon(String a){
+        //Case insensitive check
+        for (String s : POKEMON){
+            if  (a.equalsIgnoreCase(s)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 }

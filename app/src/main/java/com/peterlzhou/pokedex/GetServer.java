@@ -1,7 +1,6 @@
 package com.peterlzhou.pokedex;
 
 import android.os.AsyncTask;
-
 import com.google.android.gms.maps.model.LatLng;
 
 /**

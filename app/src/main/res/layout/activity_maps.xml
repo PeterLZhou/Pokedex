@@ -1,3 +1,4 @@
+
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -5,6 +6,8 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     tools:context="com.peterlzhou.pokedex.MapsActivity">
     <!--TODO: Fix button and EditText position, -->
         <LinearLayout
@@ -14,13 +17,14 @@
             android:layout_gravity="bottom|center_horizontal"
             android:background="@android:color/white"
             >
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/pokemon_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="@string/askpokemon"
-                android:inputType="text" />
+                android:inputType="text"
+                />
             <Button
                 android:id="@+id/ping_button"
                 android:layout_width="wrap_content"
