@@ -192,7 +192,8 @@ public class MapsActivity extends AppCompatActivity implements
             "Dratini",
             "Dragonair",
             "Dragonite",
-            "Mewtwo"
+            "Mewtwo",
+            "Mew"
     };
 
     @Override
