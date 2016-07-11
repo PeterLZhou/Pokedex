@@ -1,18 +1,13 @@
 package com.peterlzhou.pokedex;
 
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -41,7 +36,7 @@ public class MapsActivity extends AppCompatActivity implements
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
 
-    LatLng latLng;
+    LatLng mlatLng;
     GoogleMap mGoogleMap;
     SupportMapFragment mFragment;
     Marker currLocationMarker;
@@ -225,17 +220,30 @@ public class MapsActivity extends AppCompatActivity implements
         );
 
         //Zoom into your current location when you're ready to enter your pokemon name
-        EditText PokemonName = (EditText) findViewById(R.id.pokemon_name);
+        AutoCompleteTextView PokemonName = (AutoCompleteTextView) findViewById(R.id.pokemon_name);
         PokemonName.setOnClickListener(
                 new EditText.OnClickListener(){
                     public void onClick(View v){
                         CameraPosition cameraPosition = new CameraPosition.Builder()
-                                .target(latLng).zoom(14).build();
+                                .target(mlatLng).zoom(14).build();
                         mGoogleMap.animateCamera(CameraUpdateFactory
                                 .newCameraPosition(cameraPosition));
                     }
                 }
         );
+        //Set return to respond the same way as button click
+        //TODO: BugTest This
+        PokemonName.setOnEditorActionListener(
+                new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if(actionId== EditorInfo.IME_ACTION_DONE){
+                            sendMarker(v);
+                        }
+                        //Return true prevents the soft keyboard from going away, which we will handle elsewhere
+                        return true;
+                    }
+        });
     }
 
     @Override
@@ -256,6 +264,7 @@ public class MapsActivity extends AppCompatActivity implements
         buildGoogleApiClient();
 
         mGoogleApiClient.connect();
+
 
     }
 
@@ -286,10 +295,10 @@ public class MapsActivity extends AppCompatActivity implements
         if (mLastLocation != null) {
             //place marker at current position
             //mGoogleMap.clear(); # Use This if you want to refresh the map upon no last location
-            latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            mlatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             //Specify qualities of the marker we are creating
             MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
+            markerOptions.position(mlatLng);
             markerOptions.title("You");
             //TODO: Set custom bitmap to trainer at your location
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
@@ -303,6 +312,9 @@ public class MapsActivity extends AppCompatActivity implements
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         //mLocationRequest.setSmallestDisplacement(0.1F); //1/10 meter
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        //Focus on current location
+        //TODO: Update default zoom on current location
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(mlatLng));
 
 
 
@@ -326,9 +338,9 @@ public class MapsActivity extends AppCompatActivity implements
         if (currLocationMarker != null) {
             currLocationMarker.remove();
         }
-        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        mlatLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
+        markerOptions.position(mlatLng);
         markerOptions.title("Current Position");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         currLocationMarker = mGoogleMap.addMarker(markerOptions);
@@ -338,7 +350,7 @@ public class MapsActivity extends AppCompatActivity implements
         //Disabled zoom to current position
         //zoom to current position:
         /*CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(latLng).zoom(14).build();
+                .target(mlatLng).zoom(14).build();
 
         mGoogleMap.animateCamera(CameraUpdateFactory
                 .newCameraPosition(cameraPosition));*/
@@ -350,7 +362,16 @@ public class MapsActivity extends AppCompatActivity implements
     @Override
     protected void onResume(){
         super.onResume();
+        //Remove focus on soft keyboard
         findViewById(R.id.map).requestFocus();
+        if (mlatLng != null){
+            //Focus on current location
+            //TODO: Update default zoom on current location
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(mlatLng).zoom(14).build();
+            mGoogleMap.animateCamera(CameraUpdateFactory
+                    .newCameraPosition(cameraPosition));
+        }
     }
 
     public void sendMarker(View v){
