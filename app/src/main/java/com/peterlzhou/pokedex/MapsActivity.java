@@ -124,7 +124,6 @@ public class MapsActivity extends AppCompatActivity implements
         mLocationRequest.setFastestInterval(3000); //3 seconds
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         //mLocationRequest.setSmallestDisplacement(0.1F); //1/10 meter
-
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
 

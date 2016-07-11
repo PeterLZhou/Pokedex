@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.peterlzhou.pokedex.MapsActivity">
-    <!--TODO: Fix button and EditText position, fix background color, make view larger, implement autocomplete for the pokemon-->
+    <!--TODO: Fix button and EditText position, -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
