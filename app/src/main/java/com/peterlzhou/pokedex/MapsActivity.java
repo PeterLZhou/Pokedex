@@ -1,12 +1,16 @@
 package com.peterlzhou.pokedex;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -14,6 +18,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +49,7 @@ public class MapsActivity extends AppCompatActivity implements
     SupportMapFragment mFragment;
     Marker currLocationMarker;
     AutoCompleteTextView pokemon_name;
+    FrameLayout mapTouchLayer;
 
     private static final String[] POKEMON = new String[]{
             "Bulbasaur",
@@ -213,7 +220,7 @@ public class MapsActivity extends AppCompatActivity implements
         pokemon_name.setAdapter(adapter);
 
         //Handles Button Clicks, Sends POST request, unfocuses keyboard, and gives Toast message if valid, Gives Toast message if invalid
-        Button PingButton = (Button) findViewById(R.id.ping_button);
+        ImageButton PingButton = (ImageButton) findViewById(R.id.ping_button);
         PingButton.setOnClickListener(
                 new Button.OnClickListener(){
                     public void onClick(View v){
@@ -247,7 +254,7 @@ public class MapsActivity extends AppCompatActivity implements
                         return true;
                     }
         });
-        //Doesn't work
+        /*Doesn't work
         pokemon_name.setOnFocusChangeListener(new View.OnFocusChangeListener(){
             @Override
             public void onFocusChange(View v, boolean hasFocus){
@@ -255,6 +262,15 @@ public class MapsActivity extends AppCompatActivity implements
                 if (!hasFocus) {
                     hideSoftKeyboard(v);
                 }
+            }
+        });*/
+
+        mapTouchLayer = (FrameLayout)findViewById(R.id.map_touch_layer);
+        mapTouchLayer.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event){
+                hideSoftKeyboard(v);
+                return false;
             }
         });
 
@@ -337,12 +353,12 @@ public class MapsActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionSuspended(int i) {
-        Toast.makeText(this,"onConnectionSuspended",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"onConnectionSuspended",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(this,"onConnectionFailed",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"onConnectionFailed",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -417,6 +433,7 @@ public class MapsActivity extends AppCompatActivity implements
     public void hideSoftKeyboard(View view) {
         InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        //Toast.makeText(this,"Invalid Pokemon!",Toast.LENGTH_SHORT).show();
     }
 
 
