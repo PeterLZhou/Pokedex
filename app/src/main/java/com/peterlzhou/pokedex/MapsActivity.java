@@ -1,5 +1,6 @@
 package com.peterlzhou.pokedex;
 
+import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -221,12 +223,12 @@ public class MapsActivity extends AppCompatActivity implements
         );
 
         //Zoom into your current location when you're ready to enter your pokemon name
-        AutoCompleteTextView PokemonName = (AutoCompleteTextView) findViewById(R.id.pokemon_name);
-        PokemonName.setOnClickListener(
+        pokemon_name.setOnClickListener(
                 new EditText.OnClickListener(){
                     public void onClick(View v){
+                        //TODO: Shift the input box and button upward to match the keyboard
                         CameraPosition cameraPosition = new CameraPosition.Builder()
-                                .target(mlatLng).zoom(14).build();
+                                .target(mlatLng).zoom(20).build();
                         mGoogleMap.animateCamera(CameraUpdateFactory
                                 .newCameraPosition(cameraPosition));
                     }
@@ -234,7 +236,7 @@ public class MapsActivity extends AppCompatActivity implements
         );
         //Set return to respond the same way as button click
         //TODO: BugTest This
-        PokemonName.setOnEditorActionListener(
+        pokemon_name.setOnEditorActionListener(
                 new TextView.OnEditorActionListener() {
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -245,6 +247,18 @@ public class MapsActivity extends AppCompatActivity implements
                         return true;
                     }
         });
+        //Doesn't work
+        pokemon_name.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+            @Override
+            public void onFocusChange(View v, boolean hasFocus){
+                //TODO: Move the input box and button downward to the bottom of the screen
+                if (!hasFocus) {
+                    hideSoftKeyboard(v);
+                }
+            }
+        });
+
+
     }
 
     @Override
@@ -369,7 +383,7 @@ public class MapsActivity extends AppCompatActivity implements
             //Focus on current location
             //TODO: Update default zoom on current location
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(mlatLng).zoom(14).build();
+                    .target(mlatLng).zoom(20).build();
             mGoogleMap.animateCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
         }
@@ -397,6 +411,12 @@ public class MapsActivity extends AppCompatActivity implements
             }
         }
         return false;
+    }
+    //Use this method to hide the keyboard
+    //Doesn't work
+    public void hideSoftKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 
