@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -213,7 +214,7 @@ public class MapsActivity extends AppCompatActivity implements
         pokemon_name.setAdapter(adapter);
 
         //Handles Button Clicks, Sends POST request, unfocuses keyboard, and gives Toast message if valid, Gives Toast message if invalid
-        Button PingButton = (Button) findViewById(R.id.ping_button);
+        ImageButton PingButton = (ImageButton) findViewById(R.id.ping_button);
         PingButton.setOnClickListener(
                 new Button.OnClickListener(){
                     public void onClick(View v){
