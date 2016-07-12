@@ -2,6 +2,7 @@ package com.peterlzhou.pokedex;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
@@ -215,55 +216,56 @@ public class MapsActivity extends AppCompatActivity implements
         mFragment.getMapAsync(this);
 
         //Loads up the autocomplete text box
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, POKEMON);
-        pokemon_name = (AutoCompleteTextView)  findViewById(R.id.pokemon_name);
-        pokemon_name.setAdapter(adapter);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, POKEMON);
+//        pokemon_name = (AutoCompleteTextView)  findViewById(R.id.pokemon_name);
+//        pokemon_name.setAdapter(adapter);
 
         //Handles Button Clicks, Sends POST request, unfocuses keyboard, and gives Toast message if valid, Gives Toast message if invalid
         ImageButton PingButton = (ImageButton) findViewById(R.id.ping_button);
         PingButton.setOnClickListener(
                 new Button.OnClickListener(){
                     public void onClick(View v){
-                        sendMarker(v);
+                        //sendMarker(v);
+                        startActivity(new Intent(MapsActivity.this, Pop.class));
                     }
                 }
         );
 
         //Zoom into your current location when you're ready to enter your pokemon name
-        pokemon_name.setOnClickListener(
-                new EditText.OnClickListener(){
-                    public void onClick(View v){
-                        //TODO: Shift the input box and button upward to match the keyboard
-                        CameraPosition cameraPosition = new CameraPosition.Builder()
-                                .target(mlatLng).zoom(20).build();
-                        mGoogleMap.animateCamera(CameraUpdateFactory
-                                .newCameraPosition(cameraPosition));
-                    }
-                }
-        );
-        //Set return to respond the same way as button click
-        //TODO: BugTest This
-        pokemon_name.setOnEditorActionListener(
-                new TextView.OnEditorActionListener() {
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if(actionId== EditorInfo.IME_ACTION_DONE){
-                            sendMarker(v);
-                        }
-                        //Return true prevents the soft keyboard from going away, which we will handle elsewhere
-                        return true;
-                    }
-        });
-        /*Doesn't work
-        pokemon_name.setOnFocusChangeListener(new View.OnFocusChangeListener(){
-            @Override
-            public void onFocusChange(View v, boolean hasFocus){
-                //TODO: Move the input box and button downward to the bottom of the screen
-                if (!hasFocus) {
-                    hideSoftKeyboard(v);
-                }
-            }
-        });*/
+//        pokemon_name.setOnClickListener(
+//                new EditText.OnClickListener(){
+//                    public void onClick(View v){
+//                        //TODO: Shift the input box and button upward to match the keyboard
+//                        CameraPosition cameraPosition = new CameraPosition.Builder()
+//                                .target(mlatLng).zoom(20).build();
+//                        mGoogleMap.animateCamera(CameraUpdateFactory
+//                                .newCameraPosition(cameraPosition));
+//                    }
+//                }
+//        );
+//        //Set return to respond the same way as button click
+//        //TODO: BugTest This
+//        pokemon_name.setOnEditorActionListener(
+//                new TextView.OnEditorActionListener() {
+//                    @Override
+//                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                        if(actionId== EditorInfo.IME_ACTION_DONE){
+//                            sendMarker(v);
+//                        }
+//                        //Return true prevents the soft keyboard from going away, which we will handle elsewhere
+//                        return true;
+//                    }
+//        });
+//        /*Doesn't work
+//        pokemon_name.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus){
+//                //TODO: Move the input box and button downward to the bottom of the screen
+//                if (!hasFocus) {
+//                    hideSoftKeyboard(v);
+//                }
+//            }
+//        });*/
 
         mapTouchLayer = (FrameLayout)findViewById(R.id.map_touch_layer);
         mapTouchLayer.setOnTouchListener(new View.OnTouchListener(){
