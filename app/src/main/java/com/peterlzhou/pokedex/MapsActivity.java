@@ -7,10 +7,9 @@ import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -21,8 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,7 +50,6 @@ public class MapsActivity extends AppCompatActivity implements
     Marker currLocationMarker;
     AutoCompleteTextView pokemon_name;
     FrameLayout mapTouchLayer;
-    LinearLayout inputBar;
 
     private static final String[] POKEMON = new String[]{
             "Bulbasaur",
@@ -242,12 +238,6 @@ public class MapsActivity extends AppCompatActivity implements
                                 .target(mlatLng).zoom(20).build();
                         mGoogleMap.animateCamera(CameraUpdateFactory
                                 .newCameraPosition(cameraPosition));
-                        /*inputBar = (LinearLayout) findViewById(R.id.inputBar);
-                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                                ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
-                        params.addRule(RelativeLayout.CENTER_VERTICAL);
-                        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                        inputBar.setLayoutParams(params);*/
                     }
                 }
         );
@@ -363,12 +353,12 @@ public class MapsActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionSuspended(int i) {
-        Toast.makeText(this,"onConnectionSuspended",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"onConnectionSuspended",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(this,"onConnectionFailed",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"onConnectionFailed",Toast.LENGTH_SHORT).show();
     }
 
     @Override
