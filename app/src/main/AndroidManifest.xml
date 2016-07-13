@@ -48,8 +48,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".Pop"
-            android:theme="@style/AppTheme.PopUpTheme">
+            android:theme="@style/AppTheme.PopUpTheme"
+            android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
     </application>
 

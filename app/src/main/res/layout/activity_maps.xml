@@ -27,7 +27,6 @@
         android:id="@+id/ping_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_weight="1"
         android:src="@drawable/pokemonbutton"
         android:background="@null"/>
     <!--TODO: Fix button and EditText position, -->
