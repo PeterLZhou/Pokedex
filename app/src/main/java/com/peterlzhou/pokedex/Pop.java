@@ -21,7 +21,7 @@ import android.widget.Toast;
 /**
  * Created by peterlzhou on 7/12/16.
  */
-
+//TODO: Change this into a dialog maybe?
 
 public class Pop extends Activity{
 
