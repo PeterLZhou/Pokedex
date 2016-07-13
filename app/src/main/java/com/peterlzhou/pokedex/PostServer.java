@@ -31,7 +31,7 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
 
     protected void postData(Capture mCapture){
         //Put URL and establish conection to null outside to better catch exceptions
-        URL url = new URL(SERVERURL);
+        URL url = new URL(SERVERURL + "/log");
         HttpURLConnection client = null;
         try{
             client = (HttpURLConnection) url.openConnection();
