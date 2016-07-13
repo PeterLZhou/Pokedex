@@ -59,14 +59,16 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
             JSONObject node = new JSONObject();
             //Specify the attributes of the JSON object:
             //pokemonName is a string, latitude and longitude are doubles, captureTime is a long in milliseconds
-            node.put("pokemon_name", mCapture.pokemonName);
+            node.put("pokemon_name", mCapture.pokemon_name);
             node.put("latitude", mCapture.latitude);
             node.put("longitude", mCapture.longitude);
-            node.put("time", mCapture.captureTime);
+            node.put("time", mCapture.time);
             //Open up the output stream so we can write our JSON object into the server
             OutputStreamWriter output = new OutputStreamWriter(client.getOutputStream());
             //Write the JSON object
             output.write(node.toString());
+            //This probably makes the I/O more efficient?
+            output.flush();
             //close the output stream
             output.close();
 

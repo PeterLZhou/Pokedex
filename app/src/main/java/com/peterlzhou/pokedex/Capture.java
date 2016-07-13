@@ -6,8 +6,8 @@ import java.sql.Time;
  * Created by peterlzhou on 7/13/16.
  */
 public class Capture {
-    String pokemonName;
+    String pokemon_name;
     double latitude;
     double longitude;
-    long captureTime;
+    long time;
 }
