@@ -18,13 +18,17 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Calendar;
+
 /**
  * Created by peterlzhou on 7/12/16.
  */
 //TODO: Change this into a dialog maybe?
 
 public class Pop extends Activity{
-
+    Calendar c;
+    Capture mCapture;
+    long mCaptureMilliseconds;
     private static final String[] POKEMON = new String[]{
             "Bulbasaur",
             "Ivysaur",
@@ -231,6 +235,10 @@ public class Pop extends Activity{
         //Correct Pokemon, send the POST request, unfocus the keyboard, and give a toast or some popup message
         if (validPokemon(pokemonstring)){
             Toast.makeText(this,"Valid Pokemon!",Toast.LENGTH_SHORT).show();
+            c = Calendar.getInstance();
+            mCaptureMilliseconds = c.getTimeInMillis();
+
+
         }
         //Incorrect pokemon, give a toast
         else{
