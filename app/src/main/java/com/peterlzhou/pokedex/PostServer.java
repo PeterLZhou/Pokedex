@@ -21,7 +21,7 @@ import java.net.URL;
  */
 public class PostServer extends AsyncTask<Capture, Void, Void> {
 
-    private final String SERVERURL = "http://test.com";
+    private final String SERVERURL = "https://pokedex-master.herokuapp.com";
     StringBuilder sb = new StringBuilder();
 
     //TODO: We need to convert the information into the required JSON object
@@ -40,11 +40,12 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
     }
 
     protected void postData(Capture mCapture){
+        System.out.println("We make the attempt to post data");
         //This might be unneeded
         HttpURLConnection client = null;
 
         try{
-            URL url = new URL(SERVERURL);
+            URL url = new URL(SERVERURL + "/log");
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("POST");
             //Not sure how these three lines work yet
@@ -63,6 +64,8 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
             node.put("latitude", mCapture.latitude);
             node.put("longitude", mCapture.longitude);
             node.put("time", mCapture.time);
+            //This is for debugging purposes
+            System.out.println(node.toString(4));
             //Open up the output stream so we can write our JSON object into the server
             OutputStreamWriter output = new OutputStreamWriter(client.getOutputStream());
             //Write the JSON object
@@ -73,6 +76,7 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
             output.close();
 
             int HttpResult =client.getResponseCode();
+            System.out.println("The response code is " + HttpResult);
             if(HttpResult ==HttpURLConnection.HTTP_OK){
                 BufferedReader br = new BufferedReader(new InputStreamReader(
                         client.getInputStream(),"utf-8"));

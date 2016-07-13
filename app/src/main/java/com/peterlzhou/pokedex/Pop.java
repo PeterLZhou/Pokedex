@@ -15,10 +15,12 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
+import java.util.Map;
 
 /**
  * Created by peterlzhou on 7/12/16.
@@ -237,6 +239,14 @@ public class Pop extends Activity{
             Toast.makeText(this,"Valid Pokemon!",Toast.LENGTH_SHORT).show();
             c = Calendar.getInstance();
             mCaptureMilliseconds = c.getTimeInMillis();
+            mCapture = new Capture();
+            mCapture.latitude = MapsActivity.mlatLng.latitude;
+            mCapture.longitude = MapsActivity.mlatLng.longitude;
+            mCapture.time = mCaptureMilliseconds;
+            //Dummy variable
+            mCapture.pokemon_name = pokemonstring;
+            PostServer makePost = new PostServer();
+            makePost.execute(mCapture);
 
 
         }
@@ -264,7 +274,6 @@ public class Pop extends Activity{
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         //Toast.makeText(this,"Invalid Pokemon!",Toast.LENGTH_SHORT).show();
     }
-
 }
 
 
