@@ -512,8 +512,9 @@ public class MapsActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-
-
-
+    @Override
+    public void onStart(){
+        super.onStart();
+    }
 
 }
