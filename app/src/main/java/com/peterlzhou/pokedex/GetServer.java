@@ -20,7 +20,7 @@ import java.net.URL;
  * Created by peterlzhou on 7/11/16.
  */
 public class GetServer extends AsyncTask<Void, Void, Void> {
-    private final String SERVERURL = "https://pokedex-master.herokuapp.com";
+    private final String SERVER_URL = "https://pokedex-master.herokuapp.com";
     private final String POKEMON_PARAM = "pokemon_name";
     private final String LATITUDE_PARAM = "latitude";
     private final String LONGITUDE_PARAM = "longitude";
@@ -43,7 +43,7 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
         try{
             StringBuilder result = new StringBuilder();
             //create an Android Uri #Why the fuck are there so many different URIs
-            android.net.Uri buildUri = Uri.parse(SERVERURL + "/logs")
+            android.net.Uri buildUri = Uri.parse(SERVER_URL + "/logs")
                     .buildUpon()
                     .appendQueryParameter(POKEMON_PARAM, "Charmander")
                     .appendQueryParameter(LATITUDE_PARAM, "41.3106939")

@@ -21,7 +21,7 @@ import java.net.URL;
  */
 public class PostServer extends AsyncTask<Capture, Void, Void> {
 
-    private final String SERVERURL = "https://pokedex-master.herokuapp.com";
+    private final String SERVER_URL = "https://pokedex-master.herokuapp.com";
     StringBuilder sb = new StringBuilder();
 
     //TODO: We need to convert the information into the required JSON object
@@ -46,7 +46,7 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
         HttpURLConnection client = null;
 
         try{
-            URL url = new URL(SERVERURL + "/log");
+            URL url = new URL(SERVER_URL + "/log");
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("POST");
             //Not sure how these three lines work yet
