@@ -54,6 +54,7 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
             //client.setRequestProperty("Content-Length", "");
             client.setRequestProperty("Accept", "application/json");
             //Allow urlconnection to write output???
+            //This is redundant with client.setRequestMethod("POST")
             client.setDoOutput(true);
             client.connect();
             //Create the JSON object
