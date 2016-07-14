@@ -54,15 +54,15 @@ public class MapsActivity extends AppCompatActivity implements
 
     //This is considered bad practice, I will work on fixing it later
     public static LatLng mlatLng;
-    GoogleMap mGoogleMap;
+    public static GoogleMap mGoogleMap;
     SupportMapFragment mFragment;
     Marker currLocationMarker;
     FrameLayout mapTouchLayer;
+    GetServer makeGet;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ActionBarDrawerToggle mDrawerToggle;
-    public static DrawerLayout mDrawerLayout;
-
+    private DrawerLayout mDrawerLayout;
     public static ListView mDrawerList;
     public static final String[] POKEMON = new String[]{
             //NOTE: All Pokemon taking the first position means that the other pokemon will start indexed at 1
@@ -281,10 +281,10 @@ public class MapsActivity extends AppCompatActivity implements
                         mGoogleMap.animateCamera(CameraUpdateFactory
                                 .newCameraPosition(cameraPosition));*/
                         //TODO: Comment this out for now
-                        //startActivity(new Intent(MapsActivity.this, Pop.class));
+                        startActivity(new Intent(MapsActivity.this, Pop.class));
                         //This is for the GET request. TODO: Move this
-                        GetServer makeGet = new GetServer();
-                        makeGet.execute();
+                        //GetServer makeGet = new GetServer();
+                        //makeGet.execute();
 
                     }
                 }
@@ -463,6 +463,9 @@ public class MapsActivity extends AppCompatActivity implements
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             selectItem(position);
+            //This is for the GET request. TODO: Move this
+            makeGet = new GetServer();
+            makeGet.execute();
         }
     }
 
