@@ -2,24 +2,32 @@ package com.peterlzhou.pokedex;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,10 +56,15 @@ public class MapsActivity extends AppCompatActivity implements
     GoogleMap mGoogleMap;
     SupportMapFragment mFragment;
     Marker currLocationMarker;
-    AutoCompleteTextView pokemon_name;
     FrameLayout mapTouchLayer;
-
-    private static final String[] POKEMON = new String[]{
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private static final String[] mPlanetTitles = new String[]{
+            //NOTE: All Pokemon taking the first position means that the other pokemon will start indexed at 1
+            "All Pokemon",
             "Bulbasaur",
             "Ivysaur",
             "Venusaur",
@@ -208,62 +221,101 @@ public class MapsActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
+        setContentView(R.layout.main_drawer);
 
         //Loads up the maps fragment
         mFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mFragment.getMapAsync(this);
+        mTitle = mDrawerTitle = getTitle();
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.draw_item, mPlanetTitles));
+        //set up drawerlistview with items and click listener
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        // ActionBarDrawerToggle ties together the the proper interactions
+        // between the sliding drawer and the action bar app icon
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                mDrawerLayout,         /* DrawerLayout object */
+                R.drawable.ic_drawer,  /* nav drawer image to replace 'Up' caret */
+                R.string.drawer_open,  /* "open drawer" description for accessibility */
+                R.string.drawer_close  /* "close drawer" description for accessibility */
+        ) {
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+
+            }
+
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        if (savedInstanceState == null) {
+            selectItem(0);
+        }
 
         //Loads up the autocomplete text box
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, POKEMON);
-        pokemon_name = (AutoCompleteTextView)  findViewById(R.id.pokemon_name);
-        pokemon_name.setAdapter(adapter);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, POKEMON);
+//        pokemon_name = (AutoCompleteTextView)  findViewById(R.id.pokemon_name);
+//        pokemon_name.setAdapter(adapter);
 
         //Handles Button Clicks, Sends POST request, unfocuses keyboard, and gives Toast message if valid, Gives Toast message if invalid
         ImageButton PingButton = (ImageButton) findViewById(R.id.ping_button);
         PingButton.setOnClickListener(
                 new Button.OnClickListener(){
                     public void onClick(View v){
-                        sendMarker(v);
-                    }
-                }
-        );
-
-        //Zoom into your current location when you're ready to enter your pokemon name
-        pokemon_name.setOnClickListener(
-                new EditText.OnClickListener(){
-                    public void onClick(View v){
-                        //TODO: Shift the input box and button upward to match the keyboard
+                        //Zooms the Camera in, then starts the intent
                         CameraPosition cameraPosition = new CameraPosition.Builder()
                                 .target(mlatLng).zoom(20).build();
                         mGoogleMap.animateCamera(CameraUpdateFactory
                                 .newCameraPosition(cameraPosition));
+                        startActivity(new Intent(MapsActivity.this, Pop.class));
                     }
                 }
         );
-        //Set return to respond the same way as button click
-        //TODO: BugTest This
-        pokemon_name.setOnEditorActionListener(
-                new TextView.OnEditorActionListener() {
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if(actionId== EditorInfo.IME_ACTION_DONE){
-                            sendMarker(v);
-                        }
-                        //Return true prevents the soft keyboard from going away, which we will handle elsewhere
-                        return true;
-                    }
-        });
-        /*Doesn't work
-        pokemon_name.setOnFocusChangeListener(new View.OnFocusChangeListener(){
-            @Override
-            public void onFocusChange(View v, boolean hasFocus){
-                //TODO: Move the input box and button downward to the bottom of the screen
-                if (!hasFocus) {
-                    hideSoftKeyboard(v);
-                }
-            }
-        });*/
+        //Zoom into your current location when you're ready to enter your pokemon name
+//        pokemon_name.setOnClickListener(
+//                new EditText.OnClickListener(){
+//                    public void onClick(View v){
+//                        CameraPosition cameraPosition = new CameraPosition.Builder()
+//                                .target(mlatLng).zoom(20).build();
+//                        mGoogleMap.animateCamera(CameraUpdateFactory
+//                                .newCameraPosition(cameraPosition));
+//                    }
+//                }
+//        );
+//        //Set return to respond the same way as button click
+//        //TODO: BugTest This
+//        pokemon_name.setOnEditorActionListener(
+//                new TextView.OnEditorActionListener() {
+//                    @Override
+//                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                        if(actionId== EditorInfo.IME_ACTION_DONE){
+//                            sendMarker(v);
+//                        }
+//                        //Return true prevents the soft keyboard from going away, which we will handle elsewhere
+//                        return true;
+//                    }
+//        });
+//        /*Doesn't work
+//        pokemon_name.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus){
+//                //TODO: Move the input box and button downward to the bottom of the screen
+//                if (!hasFocus) {
+//                    hideSoftKeyboard(v);
+//                }
+//            }
+//        });*/
 
         mapTouchLayer = (FrameLayout)findViewById(R.id.map_touch_layer);
         mapTouchLayer.setOnTouchListener(new View.OnTouchListener(){
@@ -346,9 +398,6 @@ public class MapsActivity extends AppCompatActivity implements
         //Focus on current location
         //TODO: Update default zoom on current location
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(mlatLng));
-
-
-
     }
 
     @Override
@@ -405,29 +454,13 @@ public class MapsActivity extends AppCompatActivity implements
         }
     }
 
-    public void sendMarker(View v){
-        pokemon_name = (AutoCompleteTextView) findViewById(R.id.pokemon_name);
-        String pokemonstring = pokemon_name.getText().toString();
-        //Correct Pokemon, send the POST request, unfocus the keyboard, and give a toast or some popup message
-        if (validPokemon(pokemonstring)){
-            Toast.makeText(this,"Valid Pokemon!",Toast.LENGTH_SHORT).show();
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
         }
-        //Incorrect pokemon, give a toast
-        else{
-            Toast.makeText(this,"Invalid Pokemon!",Toast.LENGTH_SHORT).show();
-        }
-
     }
 
-    protected boolean validPokemon(String a){
-        //Case insensitive check
-        for (String s : POKEMON){
-            if  (a.equalsIgnoreCase(s)){
-                return true;
-            }
-        }
-        return false;
-    }
     //Use this method to hide the keyboard
     //Doesn't work
     public void hideSoftKeyboard(View view) {
@@ -435,6 +468,50 @@ public class MapsActivity extends AppCompatActivity implements
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         //Toast.makeText(this,"Invalid Pokemon!",Toast.LENGTH_SHORT).show();
     }
+
+    private void selectItem(int position) {
+        // update the main content by replacing fragments
+        // update selected item and title, then close the drawer
+        mDrawerList.setItemChecked(position, true);
+        mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    /* Called whenever we call invalidateOptionsMenu() */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the nav drawer is open, hide action items related to the content view
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        // Handle your other action bar items...
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
 
 
 }
