@@ -34,8 +34,9 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
 
 
     //TODO: Make the HTTP Request to our web server, we can either send it as a series of doubles or we can make a struct containing time?
-    protected void onPostExecute()
+    protected void onPostExecute(Void result)
     {
+        super.onPostExecute(result);
         System.out.println("We've executed the AsyncTask");
     }
 

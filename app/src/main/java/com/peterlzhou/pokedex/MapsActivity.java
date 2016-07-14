@@ -274,12 +274,16 @@ public class MapsActivity extends AppCompatActivity implements
         PingButton.setOnClickListener(
                 new Button.OnClickListener(){
                     public void onClick(View v){
-                        //Zooms the Camera in, then starts the intent
-                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                        //Zooms the Camera in, then starts the intent # The zoom doesn't work
+                        /*CameraPosition cameraPosition = new CameraPosition.Builder()
                                 .target(mlatLng).zoom(20).build();
                         mGoogleMap.animateCamera(CameraUpdateFactory
-                                .newCameraPosition(cameraPosition));
-                        startActivity(new Intent(MapsActivity.this, Pop.class));
+                                .newCameraPosition(cameraPosition));*/
+                       //Comment this out for now
+//                        startActivity(new Intent(MapsActivity.this, Pop.class));
+                        GetServer makeGet = new GetServer();
+                        makeGet.execute();
+
                     }
                 }
         );
