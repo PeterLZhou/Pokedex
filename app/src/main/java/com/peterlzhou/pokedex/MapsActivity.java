@@ -52,7 +52,8 @@ public class MapsActivity extends AppCompatActivity implements
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
 
-    LatLng mlatLng;
+    //This is considered bad practice, I will work on fixing it later
+    public static LatLng mlatLng;
     GoogleMap mGoogleMap;
     SupportMapFragment mFragment;
     Marker currLocationMarker;
@@ -61,6 +62,7 @@ public class MapsActivity extends AppCompatActivity implements
     private CharSequence mTitle;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
+    //This is considered bad practice, I will work on fixing it later
     private ListView mDrawerList;
     private static final String[] mPlanetTitles = new String[]{
             //NOTE: All Pokemon taking the first position means that the other pokemon will start indexed at 1
