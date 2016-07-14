@@ -21,7 +21,7 @@ import java.net.URL;
  */
 public class PostServer extends AsyncTask<Capture, Void, Void> {
 
-    private final String SERVERURL = "https://pokedex-master.herokuapp.com";
+    private final String SERVER_URL = "https://pokedex-master.herokuapp.com";
     StringBuilder sb = new StringBuilder();
 
     //TODO: We need to convert the information into the required JSON object
@@ -34,8 +34,9 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
 
 
     //TODO: Make the HTTP Request to our web server, we can either send it as a series of doubles or we can make a struct containing time?
-    protected void onPostExecute()
+    protected void onPostExecute(Void result)
     {
+        super.onPostExecute(result);
         System.out.println("We've executed the AsyncTask");
     }
 
@@ -45,7 +46,7 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
         HttpURLConnection client = null;
 
         try{
-            URL url = new URL(SERVERURL + "/log");
+            URL url = new URL(SERVER_URL + "/log");
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("POST");
             //Not sure how these three lines work yet
@@ -54,6 +55,7 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
             //client.setRequestProperty("Content-Length", "");
             client.setRequestProperty("Accept", "application/json");
             //Allow urlconnection to write output???
+            //This is redundant with client.setRequestMethod("POST")
             client.setDoOutput(true);
             client.connect();
             //Create the JSON object

@@ -61,162 +61,163 @@ public class MapsActivity extends AppCompatActivity implements
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ActionBarDrawerToggle mDrawerToggle;
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private static final String[] mPlanetTitles = new String[]{
+    public static DrawerLayout mDrawerLayout;
+
+    public static ListView mDrawerList;
+    public static final String[] POKEMON = new String[]{
             //NOTE: All Pokemon taking the first position means that the other pokemon will start indexed at 1
             "All Pokemon",
+            "Abra",
+            "Aerodactyl",
+            "Alakazam",
+            "Arbok",
+            "Arcanine",
+            "Articuno",
+            "Beedrill",
+            "Bellsprout",
+            "Blastoise",
             "Bulbasaur",
-            "Ivysaur",
-            "Venusaur",
+            "Butterfree",
+            "Caterpie",
+            "Chansey",
+            "Charizard",
             "Charmander",
             "Charmeleon",
-            "Charizard",
-            "Squirtle",
-            "Wartortle",
-            "Blastoise",
-            "Caterpie",
-            "Metapod",
-            "Butterfree",
-            "Weedle",
-            "Kakuna",
-            "Beedrill",
-            "Pidgey",
-            "Pidgeotto",
-            "Pidgeot",
-            "Rattata",
-            "Raticate",
-            "Spearow",
-            "Fearow",
-            "Ekans",
-            "Arbok",
-            "Pikachu",
-            "Raichu",
-            "Sandshrew",
-            "Sandslash",
-            "Nidoran♀",
-            "Nidorina",
-            "Nidoqueen",
-            "Nidoran♂",
-            "Nidorino",
-            "Nidoking",
-            "Clefairy",
             "Clefable",
-            "Vulpix",
-            "Ninetales",
-            "Jigglypuff",
-            "Wigglytuff",
-            "Zubat",
-            "Golbat",
-            "Oddish",
-            "Gloom",
-            "Vileplume",
-            "Paras",
-            "Parasect",
-            "Venonat",
-            "Venomoth",
-            "Diglett",
-            "Dugtrio",
-            "Meowth",
-            "Persian",
-            "Psyduck",
-            "Golduck",
-            "Mankey",
-            "Primeape",
-            "Growlithe",
-            "Arcanine",
-            "Poliwag",
-            "Poliwhirl",
-            "Poliwrath",
-            "Abra",
-            "Kadabra",
-            "Alakazam",
-            "Machop",
-            "Machoke",
-            "Machamp",
-            "Bellsprout",
-            "Weepinbell",
-            "Victreebel",
-            "Tentacool",
-            "Tentacruel",
-            "Geodude",
-            "Graveler",
-            "Golem",
-            "Ponyta",
-            "Rapidash",
-            "Slowpoke",
-            "Slowbro",
-            "Magnemite",
-            "Magneton",
-            "Farfetch'd",
-            "Doduo",
-            "Dodrio",
-            "Seel",
-            "Dewgong",
-            "Grimer",
-            "Muk",
-            "Shellder",
+            "Clefairy",
             "Cloyster",
-            "Gastly",
-            "Haunter",
-            "Gengar",
-            "Onix",
+            "Cubone",
+            "Dewgong",
+            "Diglett",
+            "Ditto",
+            "Dodrio",
+            "Doduo",
+            "Dragonair",
+            "Dragonite",
+            "Dratini",
             "Drowzee",
-            "Hypno",
-            "Krabby",
-            "Kingler",
-            "Voltorb",
+            "Dugtrio",
+            "Eevee",
+            "Ekans",
+            "Electabuzz",
             "Electrode",
             "Exeggcute",
             "Exeggutor",
-            "Cubone",
-            "Marowak",
-            "Hitmonlee",
-            "Hitmonchan",
-            "Lickitung",
-            "Koffing",
-            "Weezing",
-            "Rhyhorn",
-            "Rhydon",
-            "Chansey",
-            "Tangela",
-            "Kangaskhan",
-            "Horsea",
-            "Seadra",
-            "Goldeen",
-            "Seaking",
-            "Staryu",
-            "Starmie",
-            "Mr. Mime",
-            "Scyther",
-            "Jynx",
-            "Electabuzz",
-            "Magmar",
-            "Pinsir",
-            "Tauros",
-            "Magikarp",
-            "Gyarados",
-            "Lapras",
-            "Ditto",
-            "Eevee",
-            "Vaporeon",
-            "Jolteon",
+            "Farfetch'd",
+            "Fearow",
             "Flareon",
-            "Porygon",
-            "Omanyte",
-            "Omastar",
+            "Gastly",
+            "Gengar",
+            "Geodude",
+            "Gloom",
+            "Golbat",
+            "Goldeen",
+            "Golduck",
+            "Golem",
+            "Graveler",
+            "Grimer",
+            "Growlithe",
+            "Gyarados",
+            "Haunter",
+            "Hitmonchan",
+            "Hitmonlee",
+            "Horsea",
+            "Hypno",
+            "Ivysaur",
+            "Jigglypuff",
+            "Jolteon",
+            "Jynx",
             "Kabuto",
             "Kabutops",
-            "Aerodactyl",
-            "Snorlax",
-            "Articuno",
-            "Zapdos",
-            "Moltres",
-            "Dratini",
-            "Dragonair",
-            "Dragonite",
+            "Kadabra",
+            "Kakuna",
+            "Kangaskhan",
+            "Kingler",
+            "Koffing",
+            "Krabby",
+            "Lapras",
+            "Lickitung",
+            "Machamp",
+            "Machoke",
+            "Machop",
+            "Magikarp",
+            "Magmar",
+            "Magnemite",
+            "Magneton",
+            "Mankey",
+            "Marowak",
+            "Meowth",
+            "Metapod",
+            "Mew",
             "Mewtwo",
-            "Mew"
+            "Moltres",
+            "Mr. Mime",
+            "Muk",
+            "Nidoking",
+            "Nidoqueen",
+            "Nidoran♀",
+            "Nidoran♂",
+            "Nidorina",
+            "Nidorino",
+            "Ninetales",
+            "Oddish",
+            "Omanyte",
+            "Omastar",
+            "Onix",
+            "Paras",
+            "Parasect",
+            "Persian",
+            "Pidgeot",
+            "Pidgeotto",
+            "Pidgey",
+            "Pikachu",
+            "Pinsir",
+            "Poliwag",
+            "Poliwhirl",
+            "Poliwrath",
+            "Ponyta",
+            "Porygon",
+            "Primeape",
+            "Psyduck",
+            "Raichu",
+            "Rapidash",
+            "Raticate",
+            "Rattata",
+            "Rhydon",
+            "Rhyhorn",
+            "Sandshrew",
+            "Sandslash",
+            "Scyther",
+            "Seadra",
+            "Seaking",
+            "Seel",
+            "Shellder",
+            "Slowbro",
+            "Slowpoke",
+            "Snorlax",
+            "Spearow",
+            "Squirtle",
+            "Starmie",
+            "Staryu",
+            "Tangela",
+            "Tauros",
+            "Tentacool",
+            "Tentacruel",
+            "Vaporeon",
+            "Venomoth",
+            "Venonat",
+            "Venusaur",
+            "Victreebel",
+            "Vileplume",
+            "Voltorb",
+            "Vulpix",
+            "Wartortle",
+            "Weedle",
+            "Weepinbell",
+            "Weezing",
+            "Wigglytuff",
+            "Zapdos",
+            "Zubat"
     };
 
     @Override
@@ -231,7 +232,7 @@ public class MapsActivity extends AppCompatActivity implements
         mTitle = mDrawerTitle = getTitle();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.draw_item, mPlanetTitles));
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.draw_item, POKEMON));
         //set up drawerlistview with items and click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -274,12 +275,17 @@ public class MapsActivity extends AppCompatActivity implements
         PingButton.setOnClickListener(
                 new Button.OnClickListener(){
                     public void onClick(View v){
-                        //Zooms the Camera in, then starts the intent
-                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                        //Zooms the Camera in, then starts the intent # The zoom doesn't work
+                        /*CameraPosition cameraPosition = new CameraPosition.Builder()
                                 .target(mlatLng).zoom(20).build();
                         mGoogleMap.animateCamera(CameraUpdateFactory
-                                .newCameraPosition(cameraPosition));
-                        startActivity(new Intent(MapsActivity.this, Pop.class));
+                                .newCameraPosition(cameraPosition));*/
+                        //TODO: Comment this out for now
+                        //startActivity(new Intent(MapsActivity.this, Pop.class));
+                        //This is for the GET request. TODO: Move this
+                        GetServer makeGet = new GetServer();
+                        makeGet.execute();
+
                     }
                 }
         );
@@ -381,11 +387,10 @@ public class MapsActivity extends AppCompatActivity implements
             //mGoogleMap.clear(); # Use This if you want to refresh the map upon no last location
             mlatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             //Specify qualities of the marker we are creating
-            MarkerOptions markerOptions = new MarkerOptions();
+            MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
             markerOptions.position(mlatLng);
             markerOptions.title("You");
             //TODO: Set custom bitmap to trainer at your location
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
             //Add the marker to the map
             currLocationMarker = mGoogleMap.addMarker(markerOptions);
         }
@@ -413,17 +418,15 @@ public class MapsActivity extends AppCompatActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-
         //place marker at current position
         //mGoogleMap.clear();
         if (currLocationMarker != null) {
             currLocationMarker.remove();
         }
         mlatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
+        MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
         markerOptions.position(mlatLng);
         markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         currLocationMarker = mGoogleMap.addMarker(markerOptions);
 
         //Toast.makeText(this,"Location Changed",Toast.LENGTH_SHORT).show();
@@ -512,8 +515,9 @@ public class MapsActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-
-
-
+    @Override
+    public void onStart(){
+        super.onStart();
+    }
 
 }
