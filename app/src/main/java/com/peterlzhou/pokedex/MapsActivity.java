@@ -62,7 +62,6 @@ public class MapsActivity extends AppCompatActivity implements
     private CharSequence mTitle;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
-    //This is considered bad practice, I will work on fixing it later
     private ListView mDrawerList;
     private static final String[] mPlanetTitles = new String[]{
             //NOTE: All Pokemon taking the first position means that the other pokemon will start indexed at 1
@@ -449,6 +448,7 @@ public class MapsActivity extends AppCompatActivity implements
         if (mlatLng != null){
             //Focus on current location
             //TODO: Update default zoom on current location
+            //TODO: Lock screen or make it so that it zooms on something else, basically we can't zoom if mLatLng is null
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(mlatLng).zoom(20).build();
             mGoogleMap.animateCamera(CameraUpdateFactory
