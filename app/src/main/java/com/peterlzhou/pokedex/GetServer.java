@@ -43,7 +43,7 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
         try{
             StringBuilder result = new StringBuilder();
             //create an Android Uri #Why the fuck are there so many different URIs
-            android.net.Uri buildUri = Uri.parse(SERVERURL + "/log")
+            android.net.Uri buildUri = Uri.parse(SERVERURL + "/logs")
                     .buildUpon()
                     .appendQueryParameter(POKEMON_PARAM, "Charmander")
                     .appendQueryParameter(LATITUDE_PARAM, "41.3106939")
@@ -61,6 +61,8 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
             //Next two lines allow server to write input screen
             client.setRequestMethod("GET");
             client.setDoInput(true);
+            int responseCode = client.getResponseCode();
+            System.out.println(responseCode);
             //This is where we collect the input stream from the server #A site used a buffered reader for this. What's the difference?
             BufferedReader input= new BufferedReader(new InputStreamReader(client.getInputStream()));
             String helpme;

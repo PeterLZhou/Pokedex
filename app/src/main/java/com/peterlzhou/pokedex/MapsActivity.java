@@ -61,8 +61,9 @@ public class MapsActivity extends AppCompatActivity implements
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ActionBarDrawerToggle mDrawerToggle;
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
+    public static DrawerLayout mDrawerLayout;
+
+    public static ListView mDrawerList;
     public static final String[] POKEMON = new String[]{
             //NOTE: All Pokemon taking the first position means that the other pokemon will start indexed at 1
             "All Pokemon",
@@ -279,8 +280,9 @@ public class MapsActivity extends AppCompatActivity implements
                                 .target(mlatLng).zoom(20).build();
                         mGoogleMap.animateCamera(CameraUpdateFactory
                                 .newCameraPosition(cameraPosition));*/
-                       //Comment this out for now
-//                        startActivity(new Intent(MapsActivity.this, Pop.class));
+                        //TODO: Comment this out for now
+                        //startActivity(new Intent(MapsActivity.this, Pop.class));
+                        //This is for the GET request. TODO: Move this
                         GetServer makeGet = new GetServer();
                         makeGet.execute();
 
