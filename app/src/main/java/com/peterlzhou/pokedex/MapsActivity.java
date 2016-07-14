@@ -381,11 +381,10 @@ public class MapsActivity extends AppCompatActivity implements
             //mGoogleMap.clear(); # Use This if you want to refresh the map upon no last location
             mlatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             //Specify qualities of the marker we are creating
-            MarkerOptions markerOptions = new MarkerOptions();
+            MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
             markerOptions.position(mlatLng);
             markerOptions.title("You");
             //TODO: Set custom bitmap to trainer at your location
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
             //Add the marker to the map
             currLocationMarker = mGoogleMap.addMarker(markerOptions);
         }
@@ -413,17 +412,15 @@ public class MapsActivity extends AppCompatActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-
         //place marker at current position
         //mGoogleMap.clear();
         if (currLocationMarker != null) {
             currLocationMarker.remove();
         }
         mlatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
+        MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
         markerOptions.position(mlatLng);
         markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         currLocationMarker = mGoogleMap.addMarker(markerOptions);
 
         //Toast.makeText(this,"Location Changed",Toast.LENGTH_SHORT).show();
