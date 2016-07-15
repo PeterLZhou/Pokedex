@@ -2,6 +2,7 @@ package com.peterlzhou.pokedex;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -12,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,28 +44,36 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationListener;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MapsActivity extends AppCompatActivity implements
         OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
-
+    Context context = this;
     //This is considered bad practice, I will work on fixing it later
     public static LatLng mlatLng;
     GoogleMap mGoogleMap;
     SupportMapFragment mFragment;
     Marker currLocationMarker;
     FrameLayout mapTouchLayer;
+    GetServer makeGet;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
+    Timer t;
+    LatLng viewPortLatLng;
+    Double viewlatitude, viewlongitude = 0.0;
     private ActionBarDrawerToggle mDrawerToggle;
-    public static DrawerLayout mDrawerLayout;
-
+    private DrawerLayout mDrawerLayout;
     public static ListView mDrawerList;
+    double viewPortLat, viewPortLng;
     public static final String[] POKEMON = new String[]{
             //NOTE: All Pokemon taking the first position means that the other pokemon will start indexed at 1
             "All Pokemon",
@@ -264,12 +274,6 @@ public class MapsActivity extends AppCompatActivity implements
         if (savedInstanceState == null) {
             selectItem(0);
         }
-
-        //Loads up the autocomplete text box
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, POKEMON);
-//        pokemon_name = (AutoCompleteTextView)  findViewById(R.id.pokemon_name);
-//        pokemon_name.setAdapter(adapter);
-
         //Handles Button Clicks, Sends POST request, unfocuses keyboard, and gives Toast message if valid, Gives Toast message if invalid
         ImageButton PingButton = (ImageButton) findViewById(R.id.ping_button);
         PingButton.setOnClickListener(
@@ -281,14 +285,15 @@ public class MapsActivity extends AppCompatActivity implements
                         mGoogleMap.animateCamera(CameraUpdateFactory
                                 .newCameraPosition(cameraPosition));*/
                         //TODO: Comment this out for now
-                        //startActivity(new Intent(MapsActivity.this, Pop.class));
+                        startActivity(new Intent(MapsActivity.this, Pop.class));
                         //This is for the GET request. TODO: Move this
-                        GetServer makeGet = new GetServer();
-                        makeGet.execute();
+                        //GetServer makeGet = new GetServer();
+                        //makeGet.execute();
 
                     }
                 }
         );
+
         //Zoom into your current location when you're ready to enter your pokemon name
 //        pokemon_name.setOnClickListener(
 //                new EditText.OnClickListener(){
@@ -350,12 +355,23 @@ public class MapsActivity extends AppCompatActivity implements
             return;
         }
         mGoogleMap.setMyLocationEnabled(true);
-
         buildGoogleApiClient();
-
         mGoogleApiClient.connect();
-
-
+        mGoogleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                viewlatitude = (mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude + mGoogleMap.getProjection().getVisibleRegion().latLngBounds.southwest.latitude) / 2;
+                viewlongitude = (mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.longitude + mGoogleMap.getProjection().getVisibleRegion().latLngBounds.southwest.longitude) / 2;
+                t = new Timer();
+                t.schedule(new TimerTask() {
+                    public void run() {
+                        System.out.println("Refreshing data");
+                        new GetServer(mGoogleMap, context, viewlatitude, viewlongitude).execute();
+                        t.cancel(); // also just top the timer thread, otherwise, you may receive a crash report
+                    }
+                }, 1000);
+            }
+        });
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -387,12 +403,14 @@ public class MapsActivity extends AppCompatActivity implements
             //mGoogleMap.clear(); # Use This if you want to refresh the map upon no last location
             mlatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             //Specify qualities of the marker we are creating
-            MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
-            markerOptions.position(mlatLng);
-            markerOptions.title("You");
+            //MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
+            //markerOptions.position(mlatLng);
+            //markerOptions.title("You");
             //TODO: Set custom bitmap to trainer at your location
             //Add the marker to the map
-            currLocationMarker = mGoogleMap.addMarker(markerOptions);
+            //currLocationMarker = mGoogleMap.addMarker(markerOptions);
+            System.out.println("Hello");
+
         }
 
         mLocationRequest = new LocationRequest();
@@ -403,7 +421,9 @@ public class MapsActivity extends AppCompatActivity implements
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         //Focus on current location
         //TODO: Update default zoom on current location
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(mlatLng));
+        if (mlatLng != null) {
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(mlatLng));
+        }
     }
 
     @Override
@@ -420,14 +440,14 @@ public class MapsActivity extends AppCompatActivity implements
     public void onLocationChanged(Location location) {
         //place marker at current position
         //mGoogleMap.clear();
-        if (currLocationMarker != null) {
+        /*if (currLocationMarker != null) {
             currLocationMarker.remove();
-        }
+        }*/
         mlatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
+        /*MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
         markerOptions.position(mlatLng);
         markerOptions.title("Current Position");
-        currLocationMarker = mGoogleMap.addMarker(markerOptions);
+        currLocationMarker = mGoogleMap.addMarker(markerOptions);*/
 
         //Toast.makeText(this,"Location Changed",Toast.LENGTH_SHORT).show();
 
@@ -456,6 +476,7 @@ public class MapsActivity extends AppCompatActivity implements
                     .target(mlatLng).zoom(20).build();
             mGoogleMap.animateCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
+
         }
     }
 
@@ -463,6 +484,10 @@ public class MapsActivity extends AppCompatActivity implements
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             selectItem(position);
+            //This is for the GET request. TODO: Move this
+            mGoogleMap.clear();
+            makeGet = new GetServer(mGoogleMap, context, viewlatitude, viewlongitude);
+            makeGet.execute();
         }
     }
 
@@ -521,3 +546,48 @@ public class MapsActivity extends AppCompatActivity implements
     }
 
 }
+
+/*
+//Supposed timer to update map after moving, we have a different solution we are currently working on
+System.out.println("About to create callback method");
+        mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            //Set a listener when map is loaded
+            @Override
+            public void onMapLoaded(){
+                mGoogleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+                    @Override
+                    public void onCameraChange(CameraPosition position) {
+                        LatLngBounds bounds = mGoogleMap.getProjection().getVisibleRegion().latLngBounds;
+                        if ((ne = bounds.northeast) == null) {
+                            sw = bounds.southwest;
+                            if (t != null) {
+                                t.purge();
+                                t.cancel();
+                            }
+                            t = new Timer();
+                            t.schedule(new TimerTask() {
+                                public void run() {
+                                    if (ne1 != ne.latitude && ne2 != ne.longitude && sw1 != sw.latitude && sw2 != sw.longitude) {
+                                        ne1 = ne.latitude;
+                                        ne2 = ne.longitude;
+                                        sw1 = sw.latitude;
+                                        sw2 = sw.longitude;
+                                        System.out.println("Refreshing data");
+                                        new GetServer(mGoogleMap, context).execute();
+                                        t.cancel();
+                                    } else {
+                                        ne1 = ne.latitude;
+                                        ne2 = ne.longitude;
+                                        sw1 = sw.latitude;
+                                        sw2 = sw.longitude;
+                                    }
+                                    t.cancel(); // also just top the timer thread, otherwise, you may receive a crash report
+                                }
+                            }, 1000);
+                            //new DownloadJSON().execute();
+                        }
+                    }
+                });
+            }
+        });
+ */
