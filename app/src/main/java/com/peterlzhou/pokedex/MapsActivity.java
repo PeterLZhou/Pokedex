@@ -47,7 +47,7 @@ public class MapsActivity extends AppCompatActivity implements
     //This is considered bad practice, I will work on fixing it later
     public static LatLng mlatLng;
     GoogleMap mGoogleMap;
-    SupportMapFragment mFragment;
+    TouchableMapFragment mFragment;
     FrameLayout mapTouchLayer;
     GetServer makeGet;
     Timer t;
@@ -219,7 +219,7 @@ public class MapsActivity extends AppCompatActivity implements
         setContentView(R.layout.main_drawer);
 
         //Loads up the maps fragment
-        mFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mFragment = (TouchableMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mFragment.getMapAsync(this);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
@@ -279,15 +279,15 @@ public class MapsActivity extends AppCompatActivity implements
                     }
                 }
         );
-
-        mapTouchLayer = (FrameLayout)findViewById(R.id.map_touch_layer);
+        //TODO: Obsolete
+        /*mapTouchLayer = (FrameLayout)findViewById(R.id.map_touch_layer);
         mapTouchLayer.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event){
                 hideSoftKeyboard(v);
                 return false;
             }
-        });
+        });*/
 
 
     }
@@ -308,11 +308,13 @@ public class MapsActivity extends AppCompatActivity implements
         mGoogleMap.setMyLocationEnabled(true);
         buildGoogleApiClient();
         mGoogleApiClient.connect();
+        //Map location change listener TODO: Obsolete
         mGoogleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
-                viewlatitude = (mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude + mGoogleMap.getProjection().getVisibleRegion().latLngBounds.southwest.latitude) / 2;
+                /*viewlatitude = (mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude + mGoogleMap.getProjection().getVisibleRegion().latLngBounds.southwest.latitude) / 2;
                 viewlongitude = (mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.longitude + mGoogleMap.getProjection().getVisibleRegion().latLngBounds.southwest.longitude) / 2;
+                System.out.println("The map changed and the viewlatitude is" + viewlatitude + "and the view longitude is" + viewlongitude);
                 t = new Timer();
                 t.schedule(new TimerTask() {
                     public void run() {
@@ -320,9 +322,36 @@ public class MapsActivity extends AppCompatActivity implements
                         new GetServer(mGoogleMap, context, viewlatitude, viewlongitude).execute();
                         t.cancel(); // also just top the timer thread, otherwise, you may receive a crash report
                     }
-                }, 1000);
+                }, 1000);*/
             }
         });
+        //Map on settled listener
+        MapStateListener myMapListener = new MapStateListener(mGoogleMap, mFragment, this) {
+            @Override
+            public void onMapTouched() {
+                System.out.println("I touched the map");
+
+            }
+
+            @Override
+            public void onMapReleased() {
+                System.out.println("I released the map");
+            }
+
+            @Override
+            public void onMapUnsettled() {
+                System.out.println("I unsettled the map");
+            }
+
+            @Override
+            public void onMapSettled() {
+                System.out.println("I settled the map");
+                viewlatitude = (mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude + mGoogleMap.getProjection().getVisibleRegion().latLngBounds.southwest.latitude) / 2;
+                viewlongitude = (mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.longitude + mGoogleMap.getProjection().getVisibleRegion().latLngBounds.southwest.longitude) / 2;
+                System.out.println("The map changed and the viewlatitude is" + viewlatitude + "and the view longitude is" + viewlongitude);
+                new GetServer(mGoogleMap, context, viewlatitude, viewlongitude).execute();
+            }
+        };
     }
 
     protected synchronized void buildGoogleApiClient() {
