@@ -107,7 +107,7 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
             //Close that shit
             input.close();
             //This is to test that we have received the input
-            System.out.println(result.toString());
+            //System.out.println(result.toString());
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         } finally{
@@ -147,16 +147,27 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
                 //System.out.println("Lng = " + lng);
                 LatLng markerPosition = new LatLng(lat, lng);
                 //Set the marker's icon related to which pokemon it is # This works with all pokemon on or off because it gets the string from the JSONs returned
-                String pokemonid = "R.drawable." + oneMarker.getString("pokemon_name").toLowerCase();
-                int pokemonresource = c.getResources().getIdentifier(pokemonid, "drawable", "com.peterlzhou.pokedex");
+                String pokemonid = oneMarker.getString("pokemon_name").toLowerCase();
+                int pokemonresource = c.getResources().getIdentifier(pokemonid, "drawable", c.getPackageName());
                 //TODO: swtich back to BitmapDescriptorFactory.fromResource(pokemonresource)
-                System.out.println("Pokemon ID is " + pokemonid);
-                if (pokemonid.equals("R.drawable.charmander")){
-                    markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.bulbasaur));
-                    ;
+                //System.out.println("Pokemon ID is " + pokemonid);
+                if (pokemonid.equals("mr. mime")){
+                    markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.mrmime));
+                }
+                else if (pokemonid.equals("nidoran m")){
+                    markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.nidoranm));
+                }
+                else if (pokemonid.equals("nidoran f")){
+                    markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.nidoranf));
+                }
+                else if (pokemonid.equals("farfetch'd")){
+                    markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.farfetchd));
+                }
+                else if (pokemonid.equals("all pokemon")){
+                    markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
                 }
                 else{
-                    markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
+                    markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(pokemonresource));
                 }
                 markerOptions.position(markerPosition);
                 markerOptions.title(oneMarker.getString("pokemon_name"));
