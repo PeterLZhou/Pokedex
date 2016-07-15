@@ -146,7 +146,7 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
                 MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
 
                 markerOptions.position(markerPosition);
-                markerOptions.title("Pokemon");
+                markerOptions.title(oneMarker.getString("pokemon_name"));
                 newMarker = mGoogleMap.addMarker(markerOptions);
             }
         }

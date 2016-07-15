@@ -73,6 +73,7 @@ public class MapsActivity extends AppCompatActivity implements
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     public static ListView mDrawerList;
+    AutoCompleteTextView pokemon_name;
     double viewPortLat, viewPortLng;
     public static final String[] POKEMON = new String[]{
             //NOTE: All Pokemon taking the first position means that the other pokemon will start indexed at 1
@@ -280,15 +281,20 @@ public class MapsActivity extends AppCompatActivity implements
                 new Button.OnClickListener(){
                     public void onClick(View v){
                         //Zooms the Camera in, then starts the intent # The zoom doesn't work
-                        /*CameraPosition cameraPosition = new CameraPosition.Builder()
-                                .target(mlatLng).zoom(20).build();
-                        mGoogleMap.animateCamera(CameraUpdateFactory
-                                .newCameraPosition(cameraPosition));*/
+                        if (mlatLng !=null) {
+                            CameraPosition cameraPosition = new CameraPosition.Builder()
+                                    .target(mlatLng).zoom(20).build();
+                            mGoogleMap.animateCamera(CameraUpdateFactory
+                                    .newCameraPosition(cameraPosition));
+                        }
                         //TODO: Comment this out for now
-                        startActivity(new Intent(MapsActivity.this, Pop.class));
+                        //startActivity(new Intent(MapsActivity.this, Pop.class));
                         //This is for the GET request. TODO: Move this
                         //GetServer makeGet = new GetServer();
                         //makeGet.execute();
+                        //Show up dialog box
+                        SubmitDialogFragment myFragment = new SubmitDialogFragment();
+                        myFragment.show(getFragmentManager(), "fragment");
 
                     }
                 }
@@ -438,6 +444,7 @@ public class MapsActivity extends AppCompatActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
+        //TODO: Remove markers when viewport leaves
         //place marker at current position
         //mGoogleMap.clear();
         /*if (currLocationMarker != null) {
@@ -468,7 +475,7 @@ public class MapsActivity extends AppCompatActivity implements
         super.onResume();
         //Remove focus on soft keyboard
         findViewById(R.id.map).requestFocus();
-        if (mlatLng != null){
+        if (mlatLng != null && mGoogleMap != null){
             //Focus on current location
             //TODO: Update default zoom on current location
             //TODO: Lock screen or make it so that it zooms on something else, basically we can't zoom if mLatLng is null

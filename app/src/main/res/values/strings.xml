@@ -5,4 +5,7 @@
     <string name="askpokemon">Enter Pokemon name</string>
     <string name="drawer_close">close</string>
     <string name="drawer_open">open</string>
+    <string name="gotcha">Gotcha!</string>
+    <string name="dialog_title">Enter a Pokemon</string>
+    <string name="cancel">Cancel</string>
 </resources>
