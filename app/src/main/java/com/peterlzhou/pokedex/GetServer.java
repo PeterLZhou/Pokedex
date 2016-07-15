@@ -1,10 +1,8 @@
 package com.peterlzhou.pokedex;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.SystemClock;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -15,24 +13,18 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Map;
 
 /**
  * Created by peterlzhou on 7/11/16.
  */
 public class GetServer extends AsyncTask<Void, Void, Void> {
     private final String SERVER_URL = "https://pokedex-master.herokuapp.com";
-    private final String POKEMON_PARAM = "pokemon_name";
     private final String LATITUDE_PARAM = "latitude";
     private final String LONGITUDE_PARAM = "longitude";
     StringBuilder result;
@@ -73,12 +65,16 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
             result = new StringBuilder();
             //create an Android Uri #Why the fuck are there so many different URIs
             //The lat and lng are related to the viewport and not the current user location
-            android.net.Uri buildUri = Uri.parse(SERVER_URL + "/logs")
+            android.net.Uri masteruri = Uri.parse(SERVER_URL + "/logs")
                     .buildUpon()
-                    .appendQueryParameter(POKEMON_PARAM, getPokemon())
                     .appendQueryParameter(LATITUDE_PARAM, Double.toString(getviewPortLat))
                     .appendQueryParameter(LONGITUDE_PARAM, Double.toString(getviewPortLng))
                     .build();
+            String stringuri = masteruri.toString();
+            if (!getPokemon().equals("All Pokemon")){
+                stringuri +="&pokemon_name=" + getPokemon();
+            }
+            android.net.Uri buildUri = Uri.parse(stringuri);
             //Convert it into a Java URI
             System.out.println("We make a GET request " + buildUri.toString());
             java.net.URI javauri = new java.net.URI(buildUri.toString());
@@ -146,7 +142,7 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
                 MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
 
                 markerOptions.position(markerPosition);
-                markerOptions.title("Pokemon");
+                markerOptions.title(oneMarker.getString("pokemon_name"));
                 newMarker = mGoogleMap.addMarker(markerOptions);
             }
         }

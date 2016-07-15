@@ -1,37 +1,27 @@
 package com.peterlzhou.pokedex;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -41,12 +31,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationListener;
 
 import java.util.Timer;
@@ -62,18 +48,13 @@ public class MapsActivity extends AppCompatActivity implements
     public static LatLng mlatLng;
     GoogleMap mGoogleMap;
     SupportMapFragment mFragment;
-    Marker currLocationMarker;
     FrameLayout mapTouchLayer;
     GetServer makeGet;
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
     Timer t;
-    LatLng viewPortLatLng;
     Double viewlatitude, viewlongitude = 0.0;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     public static ListView mDrawerList;
-    double viewPortLat, viewPortLng;
     public static final String[] POKEMON = new String[]{
             //NOTE: All Pokemon taking the first position means that the other pokemon will start indexed at 1
             "All Pokemon",
@@ -165,8 +146,8 @@ public class MapsActivity extends AppCompatActivity implements
             "Muk",
             "Nidoking",
             "Nidoqueen",
-            "Nidoran♀",
-            "Nidoran♂",
+            "Nidoran F",
+            "Nidoran M",
             "Nidorina",
             "Nidorino",
             "Ninetales",
@@ -239,10 +220,9 @@ public class MapsActivity extends AppCompatActivity implements
         //Loads up the maps fragment
         mFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mFragment.getMapAsync(this);
-        mTitle = mDrawerTitle = getTitle();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.draw_item, POKEMON));
+        mDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.draw_item, POKEMON));
         //set up drawerlistview with items and click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -280,54 +260,24 @@ public class MapsActivity extends AppCompatActivity implements
                 new Button.OnClickListener(){
                     public void onClick(View v){
                         //Zooms the Camera in, then starts the intent # The zoom doesn't work
-                        /*CameraPosition cameraPosition = new CameraPosition.Builder()
-                                .target(mlatLng).zoom(20).build();
-                        mGoogleMap.animateCamera(CameraUpdateFactory
-                                .newCameraPosition(cameraPosition));*/
+                        if (mlatLng !=null) {
+                            CameraPosition cameraPosition = new CameraPosition.Builder()
+                                    .target(mlatLng).zoom(20).build();
+                            mGoogleMap.animateCamera(CameraUpdateFactory
+                                    .newCameraPosition(cameraPosition));
+                        }
                         //TODO: Comment this out for now
-                        startActivity(new Intent(MapsActivity.this, Pop.class));
+                        //startActivity(new Intent(MapsActivity.this, Pop.class));
                         //This is for the GET request. TODO: Move this
                         //GetServer makeGet = new GetServer();
                         //makeGet.execute();
+                        //Show up dialog box
+                        SubmitDialogFragment myFragment = new SubmitDialogFragment();
+                        myFragment.show(getFragmentManager(), "fragment");
 
                     }
                 }
         );
-
-        //Zoom into your current location when you're ready to enter your pokemon name
-//        pokemon_name.setOnClickListener(
-//                new EditText.OnClickListener(){
-//                    public void onClick(View v){
-//                        CameraPosition cameraPosition = new CameraPosition.Builder()
-//                                .target(mlatLng).zoom(20).build();
-//                        mGoogleMap.animateCamera(CameraUpdateFactory
-//                                .newCameraPosition(cameraPosition));
-//                    }
-//                }
-//        );
-//        //Set return to respond the same way as button click
-//        //TODO: BugTest This
-//        pokemon_name.setOnEditorActionListener(
-//                new TextView.OnEditorActionListener() {
-//                    @Override
-//                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                        if(actionId== EditorInfo.IME_ACTION_DONE){
-//                            sendMarker(v);
-//                        }
-//                        //Return true prevents the soft keyboard from going away, which we will handle elsewhere
-//                        return true;
-//                    }
-//        });
-//        /*Doesn't work
-//        pokemon_name.setOnFocusChangeListener(new View.OnFocusChangeListener(){
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus){
-//                //TODO: Move the input box and button downward to the bottom of the screen
-//                if (!hasFocus) {
-//                    hideSoftKeyboard(v);
-//                }
-//            }
-//        });*/
 
         mapTouchLayer = (FrameLayout)findViewById(R.id.map_touch_layer);
         mapTouchLayer.setOnTouchListener(new View.OnTouchListener(){
@@ -438,6 +388,7 @@ public class MapsActivity extends AppCompatActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
+        //TODO: Remove markers when viewport leaves
         //place marker at current position
         //mGoogleMap.clear();
         /*if (currLocationMarker != null) {
@@ -468,7 +419,7 @@ public class MapsActivity extends AppCompatActivity implements
         super.onResume();
         //Remove focus on soft keyboard
         findViewById(R.id.map).requestFocus();
-        if (mlatLng != null){
+        if (mlatLng != null && mGoogleMap != null){
             //Focus on current location
             //TODO: Update default zoom on current location
             //TODO: Lock screen or make it so that it zooms on something else, basically we can't zoom if mLatLng is null
@@ -476,8 +427,8 @@ public class MapsActivity extends AppCompatActivity implements
                     .target(mlatLng).zoom(20).build();
             mGoogleMap.animateCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
-
         }
+
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
