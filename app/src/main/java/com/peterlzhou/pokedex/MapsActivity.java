@@ -57,7 +57,8 @@ public class MapsActivity extends AppCompatActivity implements
     public static ListView mDrawerList;
     public static final String[] POKEMON = new String[]{
             //NOTE: All Pokemon taking the first position means that the other pokemon will start indexed at 1
-            "All Pokemon",
+            "All Pokémon",
+            "Rare Pokémon",
             "Abra",
             "Aerodactyl",
             "Alakazam",
