@@ -1,9 +1,12 @@
 package com.peterlzhou.pokedex;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -35,6 +38,17 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
     StringBuilder result;
     JSONObject jsonMarkers;
     Marker newMarker;
+    Context c;
+    GoogleMap mGoogleMap;
+    double getviewPortLat;
+    double getviewPortLng;
+    public GetServer(GoogleMap googleMap, Context context, double viewPortLat, double viewPortLng){
+        mGoogleMap = googleMap;
+        c = context;
+        getviewPortLat = viewPortLat;
+        getviewPortLng = viewPortLng;
+    }
+
     //TODO: We need to convert the JSON into our LatLngs or recieve the entire map overlay
     @Override
     protected Void doInBackground(Void... a)
@@ -58,13 +72,15 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
         try{
             result = new StringBuilder();
             //create an Android Uri #Why the fuck are there so many different URIs
+            //The lat and lng are related to the viewport and not the current user location
             android.net.Uri buildUri = Uri.parse(SERVER_URL + "/logs")
                     .buildUpon()
                     .appendQueryParameter(POKEMON_PARAM, getPokemon())
-                    .appendQueryParameter(LATITUDE_PARAM, Double.toString(MapsActivity.mlatLng.latitude))
-                    .appendQueryParameter(LONGITUDE_PARAM, Double.toString(MapsActivity.mlatLng.longitude))
+                    .appendQueryParameter(LATITUDE_PARAM, Double.toString(getviewPortLat))
+                    .appendQueryParameter(LONGITUDE_PARAM, Double.toString(getviewPortLng))
                     .build();
             //Convert it into a Java URI
+            System.out.println("We make a GET request " + buildUri.toString());
             java.net.URI javauri = new java.net.URI(buildUri.toString());
             //Convert the Java URI into a URL
             URL url = javauri.toURL();
@@ -117,11 +133,21 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
             JSONArray jsonArray = jsonMarkers.getJSONArray("logs");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject oneMarker = jsonArray.getJSONObject(i);
-                LatLng markerPosition = new LatLng(Double.parseDouble(oneMarker.getString("latitude")), Double.parseDouble(oneMarker.getString("longitude")));
+                //Create the marker
+                Double lat = Double.parseDouble(oneMarker.getString("latitude"));
+                Double lng = Double.parseDouble(oneMarker.getString("longitude"));
+                //System.out.println("Lat = " + lat);
+                //System.out.println("Lng = " + lng);
+                LatLng markerPosition = new LatLng(lat, lng);
+                //Set the marker's icon related to which pokemon it is # This works with all pokemon on or off because it gets the string from the JSONs returned
+                String pokemonid = "R.mipmap." + oneMarker.getString("pokemon_name");
+                int pokemonresource = c.getResources().getIdentifier(pokemonid, "mipmap", "com.peterlzhou.pokedex");
+                //TODO: swtich back to BitmapDescriptorFactory.fromResource(pokemonresource)
                 MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
+
                 markerOptions.position(markerPosition);
                 markerOptions.title("Pokemon");
-                newMarker = MapsActivity.mGoogleMap.addMarker(markerOptions);
+                newMarker = mGoogleMap.addMarker(markerOptions);
             }
         }
     }
