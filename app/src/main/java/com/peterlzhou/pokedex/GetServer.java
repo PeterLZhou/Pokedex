@@ -40,6 +40,7 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
         getviewPortLat = viewPortLat;
         getviewPortLng = viewPortLng;
     }
+    MarkerOptions markerOptions;
 
     //TODO: We need to convert the JSON into our LatLngs or recieve the entire map overlay
     @Override
@@ -71,7 +72,14 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
                     .appendQueryParameter(LONGITUDE_PARAM, Double.toString(getviewPortLng))
                     .build();
             String stringuri = masteruri.toString();
-            if (!getPokemon().equals("All Pokemon")){
+            System.out.println(getPokemon());
+            if (getPokemon().equals("All Pokémon")){
+                ;
+            }
+            else if (getPokemon().equals("Rare Pokémon")){
+                stringuri += "&rarity=2";
+            }
+            else{
                 stringuri +="&pokemon_name=" + getPokemon();
             }
             android.net.Uri buildUri = Uri.parse(stringuri);
@@ -111,10 +119,13 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
 
     public String getPokemon(){
         if (MapsActivity.mDrawerList.isItemChecked(0)){
-            return "All Pokemon";
+            return "All Pokémon";
+        }
+        else if (MapsActivity.mDrawerList.isItemChecked(1)){
+            return "Rare Pokémon";
         }
         else{
-            for (int a = 1; a < 152; a++){
+            for (int a = 2; a < 153; a++){
                 if (MapsActivity.mDrawerList.isItemChecked(a)){
                     return MapsActivity.mDrawerList.getItemAtPosition(a).toString();
                 }
@@ -136,11 +147,17 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
                 //System.out.println("Lng = " + lng);
                 LatLng markerPosition = new LatLng(lat, lng);
                 //Set the marker's icon related to which pokemon it is # This works with all pokemon on or off because it gets the string from the JSONs returned
-                String pokemonid = "R.mipmap." + oneMarker.getString("pokemon_name");
-                int pokemonresource = c.getResources().getIdentifier(pokemonid, "mipmap", "com.peterlzhou.pokedex");
+                String pokemonid = "R.drawable." + oneMarker.getString("pokemon_name").toLowerCase();
+                int pokemonresource = c.getResources().getIdentifier(pokemonid, "drawable", "com.peterlzhou.pokedex");
                 //TODO: swtich back to BitmapDescriptorFactory.fromResource(pokemonresource)
-                MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
-
+                System.out.println("Pokemon ID is " + pokemonid);
+                if (pokemonid.equals("R.drawable.charmander")){
+                    markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.bulbasaur));
+                    ;
+                }
+                else{
+                    markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
+                }
                 markerOptions.position(markerPosition);
                 markerOptions.title(oneMarker.getString("pokemon_name"));
                 newMarker = mGoogleMap.addMarker(markerOptions);

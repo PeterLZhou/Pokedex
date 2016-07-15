@@ -41,6 +41,7 @@ public class SubmitDialogFragment extends DialogFragment{
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         if(actionId== EditorInfo.IME_ACTION_DONE){
                             sendMarker(v);
+                            SubmitDialogFragment.this.getDialog().cancel();
                         }
                         //Return true prevents the soft keyboard from going away, which we will handle elsewhere
                         return true;
@@ -93,8 +94,8 @@ public class SubmitDialogFragment extends DialogFragment{
 
     protected boolean validPokemon(String a){
         //Case insensitive check
-        for (String s : MapsActivity.POKEMON){
-            if  (a.equalsIgnoreCase(s)){
+        for (int i = 2; i < 153; i++){
+            if  (a.equals(MapsActivity.POKEMON[i])){
                 return true;
             }
         }
