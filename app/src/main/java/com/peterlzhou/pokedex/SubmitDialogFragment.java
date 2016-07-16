@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -26,6 +27,12 @@ public class SubmitDialogFragment extends DialogFragment{
     long mCaptureMilliseconds;
     AutoCompleteTextView pokemon_name;
     ImageButton submit_button;
+    @Override
+    public void onActivityCreated(Bundle savedInstance){
+        super.onActivityCreated(savedInstance);
+        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstance){
 

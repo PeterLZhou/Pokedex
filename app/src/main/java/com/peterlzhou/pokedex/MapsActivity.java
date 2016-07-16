@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.provider.SyncStateContract;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -35,6 +36,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.location.LocationListener;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,6 +57,7 @@ public class MapsActivity extends AppCompatActivity implements
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     public static ListView mDrawerList;
+    public static ArrayList<String> markerArrayList = new ArrayList<String>();
     public static final String[] POKEMON = new String[]{
             //NOTE: All Pokemon taking the first position means that the other pokemon will start indexed at 1
             "All Pokémon",
@@ -274,6 +277,7 @@ public class MapsActivity extends AppCompatActivity implements
                         //makeGet.execute();
                         //Show up dialog box
                         SubmitDialogFragment myFragment = new SubmitDialogFragment();
+
                         myFragment.show(getFragmentManager(), "fragment");
 
                     }
@@ -378,18 +382,16 @@ public class MapsActivity extends AppCompatActivity implements
         }
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
-        if (mLastLocation != null) {
+        if (mLastLocation != null && mGoogleMap != null) {
             //place marker at current position
             //mGoogleMap.clear(); # Use This if you want to refresh the map upon no last location
             mlatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            //Specify qualities of the marker we are creating
-            //MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
-            //markerOptions.position(mlatLng);
-            //markerOptions.title("You");
-            //TODO: Set custom bitmap to trainer at your location
-            //Add the marker to the map
-            //currLocationMarker = mGoogleMap.addMarker(markerOptions);
-            System.out.println("Hello");
+            Location location = mGoogleMap.getMyLocation();
+            CameraPosition myPosition = new CameraPosition.Builder()
+                    .target(mlatLng).zoom(20).build();
+            mGoogleMap.animateCamera(CameraUpdateFactory
+                    .newCameraPosition(myPosition));
+
 
         }
 
@@ -467,6 +469,7 @@ public class MapsActivity extends AppCompatActivity implements
             selectItem(position);
             //This is for the GET request. TODO: Move this
             mGoogleMap.clear();
+            markerArrayList.clear();
             makeGet = new GetServer(mGoogleMap, context, viewlatitude, viewlongitude);
             makeGet.execute();
         }
