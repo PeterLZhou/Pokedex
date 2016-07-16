@@ -17,7 +17,7 @@ import java.net.URL;
  */
 public class PostServer extends AsyncTask<Capture, Void, Void> {
 
-    private final String SERVER_URL = "https://pokedex-master.herokuapp.com";
+    private final String SERVER_URL = "http://pokedex-1.frckmtvvk9.us-west-2.elasticbeanstalk.com";
     StringBuilder sb = new StringBuilder();
 
     //TODO: We need to convert the information into the required JSON object
