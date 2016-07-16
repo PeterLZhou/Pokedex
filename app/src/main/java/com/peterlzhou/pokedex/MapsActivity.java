@@ -48,7 +48,7 @@ public class MapsActivity extends AppCompatActivity implements
     Context context = this;
     //This is considered bad practice, I will work on fixing it later
     public static LatLng mlatLng;
-    GoogleMap mGoogleMap;
+    public static GoogleMap mGoogleMap;
     TouchableMapFragment mFragment;
     FrameLayout mapTouchLayer;
     GetServer makeGet;
