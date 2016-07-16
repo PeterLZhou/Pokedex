@@ -27,18 +27,21 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
     private final String SERVER_URL = "http://pokedex-1.frckmtvvk9.us-west-2.elasticbeanstalk.com";
     private final String LATITUDE_PARAM = "latitude";
     private final String LONGITUDE_PARAM = "longitude";
+    private final String RANGE_PARAM = "range";
     StringBuilder result;
     JSONObject jsonMarkers;
     Marker newMarker;
     Context c;
     GoogleMap mGoogleMap;
+    double range;
     double getviewPortLat;
     double getviewPortLng;
-    public GetServer(GoogleMap googleMap, Context context, double viewPortLat, double viewPortLng){
+    public GetServer(GoogleMap googleMap, Context context, double viewPortLat, double viewPortLng, double range){
         mGoogleMap = googleMap;
         c = context;
         getviewPortLat = viewPortLat;
         getviewPortLng = viewPortLng;
+        this.range = range;
     }
     MarkerOptions markerOptions;
 
@@ -70,6 +73,7 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
                     .buildUpon()
                     .appendQueryParameter(LATITUDE_PARAM, Double.toString(getviewPortLat))
                     .appendQueryParameter(LONGITUDE_PARAM, Double.toString(getviewPortLng))
+                    .appendQueryParameter(RANGE_PARAM, Double.toString(range))
                     .build();
             String stringuri = masteruri.toString();
             System.out.println(getPokemon());
@@ -116,7 +120,7 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
             //Close that shit
             input.close();
             //This is to test that we have received the input
-            System.out.println(result.toString());
+            //System.out.println(result.toString());
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         } finally{
@@ -177,8 +181,14 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
                     }
                     markerOptions.position(markerPosition);
                     markerOptions.title(oneMarker.getString("pokemon_name"));
-                    //System.out.println("I've added a marker");
-                    newMarker = mGoogleMap.addMarker(markerOptions);
+                    //System.out.println("Pokemonid is " + pokemonid);
+                    if (markerOptions != null) {
+                        System.out.println("Fuck you + " + pokemonid);
+                        newMarker = mGoogleMap.addMarker(markerOptions);
+                    }
+                    else{
+                        System.out.println("Pokemonid: " + pokemonid);
+                    }
                 }
             }
         }

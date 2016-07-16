@@ -26,7 +26,6 @@ public class SubmitDialogFragment extends DialogFragment{
     Capture mCapture;
     long mCaptureMilliseconds;
     AutoCompleteTextView pokemon_name;
-    ImageButton submit_button;
     @Override
     public void onActivityCreated(Bundle savedInstance){
         super.onActivityCreated(savedInstance);

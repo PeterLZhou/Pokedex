@@ -21,8 +21,9 @@ public class TouchableMapFragment extends SupportMapFragment {
                              Bundle savedInstanceState) {
         mOriginalContentView = super.onCreateView(inflater, parent,
                 savedInstanceState);
-
         mTouchView = new TouchableWrapper(getActivity());
+        System.out.println("The Touchable Wrapper is " + mTouchView.toString());
+        System.out.println("The activity is" + getActivity());
         mTouchView.addView(mOriginalContentView);
 
         return mTouchView;
