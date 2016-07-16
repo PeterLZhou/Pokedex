@@ -33,11 +33,11 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
     protected void onPostExecute(Void result)
     {
         super.onPostExecute(result);
-        System.out.println("We've executed the AsyncTask");
+        //System.out.println("We've executed the AsyncTask");
     }
 
     protected void postData(Capture mCapture){
-        System.out.println("We make the attempt to post data");
+        //System.out.println("We make the attempt to post data");
         //This might be unneeded
         HttpURLConnection client = null;
 
@@ -63,7 +63,7 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
             node.put("longitude", mCapture.longitude);
             node.put("time", mCapture.time);
             //This is for debugging purposes
-            System.out.println(node.toString(4));
+            //System.out.println(node.toString(4));
             //Open up the output stream so we can write our JSON object into the server
             OutputStreamWriter output = new OutputStreamWriter(client.getOutputStream());
             //Write the JSON object
@@ -74,7 +74,7 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
             output.close();
 
             int HttpResult =client.getResponseCode();
-            System.out.println("The response code is " + HttpResult);
+            //System.out.println("The response code is " + HttpResult);
             if(HttpResult ==HttpURLConnection.HTTP_OK){
                 BufferedReader br = new BufferedReader(new InputStreamReader(
                         client.getInputStream(),"utf-8"));
@@ -84,7 +84,7 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
                 }
                 br.close();
 
-                System.out.println(""+sb.toString());
+                //System.out.println(""+sb.toString());
 
             }else{
                 System.out.println(client.getResponseMessage());

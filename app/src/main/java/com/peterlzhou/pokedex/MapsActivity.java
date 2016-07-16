@@ -1,16 +1,21 @@
 package com.peterlzhou.pokedex;
 
+import android.*;
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.provider.SyncStateContract;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -23,6 +28,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
+
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -37,12 +44,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.location.LocationListener;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MapsActivity extends AppCompatActivity implements
         OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-
+    public static final String TAG = MapsActivity.class.getSimpleName();
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     Context context = this;
@@ -52,11 +60,13 @@ public class MapsActivity extends AppCompatActivity implements
     TouchableMapFragment mFragment;
     FrameLayout mapTouchLayer;
     GetServer makeGet;
-    Timer t;
     Double viewlatitude, viewlongitude = 0.0;
+    double range = 0.0;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     public static ListView mDrawerList;
+    private View mLayout;
+    private static final int REQUEST_LOCATIONS = 0;
     public static ArrayList<String> markerArrayList = new ArrayList<String>();
     public static final String[] POKEMON = new String[]{
             //NOTE: All Pokemon taking the first position means that the other pokemon will start indexed at 1
@@ -218,9 +228,10 @@ public class MapsActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Request permission at the very start so that we don't have to go through a loop?
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.main_drawer);
-
+        mLayout = findViewById(R.id.main_drawer);
         //Loads up the maps fragment
         mFragment = (TouchableMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mFragment.getMapAsync(this);
@@ -235,8 +246,7 @@ public class MapsActivity extends AppCompatActivity implements
         // between the sliding drawer and the action bar app icon
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
-                mDrawerLayout,         /* DrawerLayout object */
-                R.drawable.ic_drawer,  /* nav drawer image to replace 'Up' caret */
+                mDrawerLayout,         /* DrawerLayout object *//* nav drawer image to replace 'Up' caret */
                 R.string.drawer_open,  /* "open drawer" description for accessibility */
                 R.string.drawer_close  /* "close drawer" description for accessibility */
         ) {
@@ -269,6 +279,8 @@ public class MapsActivity extends AppCompatActivity implements
                                     .target(mlatLng).zoom(20).build();
                             mGoogleMap.animateCamera(CameraUpdateFactory
                                     .newCameraPosition(cameraPosition));
+                            SubmitDialogFragment myFragment = new SubmitDialogFragment();
+                            myFragment.show(getFragmentManager(), "fragment");
                         }
                         //TODO: Comment this out for now
                         //startActivity(new Intent(MapsActivity.this, Pop.class));
@@ -276,86 +288,55 @@ public class MapsActivity extends AppCompatActivity implements
                         //GetServer makeGet = new GetServer();
                         //makeGet.execute();
                         //Show up dialog box
-                        SubmitDialogFragment myFragment = new SubmitDialogFragment();
-
-                        myFragment.show(getFragmentManager(), "fragment");
-
+                        else{
+                            Toast.makeText(context, "Make sure you have location services enabled.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
         );
-        //TODO: Obsolete
-        /*mapTouchLayer = (FrameLayout)findViewById(R.id.map_touch_layer);
-        mapTouchLayer.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event){
-                hideSoftKeyboard(v);
-                return false;
-            }
-        });*/
-
-
-    }
+   }
 
     @Override
     public void onMapReady(GoogleMap gMap) {
+        //System.out.println("Map is ready!");
         mGoogleMap = gMap;
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+            requestLocationPermission();
         }
-        mGoogleMap.setMyLocationEnabled(true);
-        buildGoogleApiClient();
-        mGoogleApiClient.connect();
-        //Map location change listener TODO: Obsolete
-        mGoogleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            @Override
-            public void onCameraChange(CameraPosition cameraPosition) {
-                /*viewlatitude = (mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude + mGoogleMap.getProjection().getVisibleRegion().latLngBounds.southwest.latitude) / 2;
-                viewlongitude = (mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.longitude + mGoogleMap.getProjection().getVisibleRegion().latLngBounds.southwest.longitude) / 2;
-                System.out.println("The map changed and the viewlatitude is" + viewlatitude + "and the view longitude is" + viewlongitude);
-                t = new Timer();
-                t.schedule(new TimerTask() {
-                    public void run() {
-                        System.out.println("Refreshing data");
-                        new GetServer(mGoogleMap, context, viewlatitude, viewlongitude).execute();
-                        t.cancel(); // also just top the timer thread, otherwise, you may receive a crash report
-                    }
-                }, 1000);*/
-            }
-        });
-        //Map on settled listener
-        MapStateListener myMapListener = new MapStateListener(mGoogleMap, mFragment, this) {
-            @Override
-            public void onMapTouched() {
-                System.out.println("I touched the map");
+        else {
+            mGoogleMap.setMyLocationEnabled(true);
+            buildGoogleApiClient();
+            mGoogleApiClient.connect();
+            //Map on settled listener
+            new MapStateListener(mGoogleMap, mFragment, this) {
+                @Override
+                public void onMapTouched() {
+                    //System.out.println("I touched the map");
 
-            }
+                }
 
-            @Override
-            public void onMapReleased() {
-                System.out.println("I released the map");
-            }
+                @Override
+                public void onMapReleased() {
+                    //System.out.println("I released the map");
+                }
 
-            @Override
-            public void onMapUnsettled() {
-                System.out.println("I unsettled the map");
-            }
+                @Override
+                public void onMapUnsettled() {
+                    //System.out.println("I unsettled the map");
+                }
 
-            @Override
-            public void onMapSettled() {
-                System.out.println("I settled the map");
-                viewlatitude = (mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude + mGoogleMap.getProjection().getVisibleRegion().latLngBounds.southwest.latitude) / 2;
-                viewlongitude = (mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.longitude + mGoogleMap.getProjection().getVisibleRegion().latLngBounds.southwest.longitude) / 2;
-                System.out.println("The map changed and the viewlatitude is" + viewlatitude + "and the view longitude is" + viewlongitude);
-                new GetServer(mGoogleMap, context, viewlatitude, viewlongitude).execute();
-            }
-        };
+                @Override
+                public void onMapSettled() {
+                    //System.out.println("I settled the map");
+                    viewlatitude = (mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude + mGoogleMap.getProjection().getVisibleRegion().latLngBounds.southwest.latitude) / 2;
+                    viewlongitude = (mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.longitude + mGoogleMap.getProjection().getVisibleRegion().latLngBounds.southwest.longitude) / 2;
+                    range = Math.abs(mGoogleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude - viewlatitude);
+                    //System.out.println("The map changed and the viewlatitude is" + viewlatitude + "and the view longitude is" + viewlongitude);
+                    new GetServer(mGoogleMap, context, viewlatitude, viewlongitude, range).execute();
+                }
+            };
+            System.out.println("I should have made a mapstate listener by now");
+        }
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -371,41 +352,37 @@ public class MapsActivity extends AppCompatActivity implements
     public void onConnected(Bundle bundle) {
         //Toast.makeText(this, "onConnected", Toast.LENGTH_SHORT).show();
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+            requestLocationPermission();
         }
-        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null && mGoogleMap != null) {
-            //place marker at current position
-            //mGoogleMap.clear(); # Use This if you want to refresh the map upon no last location
-            mlatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            Location location = mGoogleMap.getMyLocation();
-            CameraPosition myPosition = new CameraPosition.Builder()
-                    .target(mlatLng).zoom(20).build();
-            mGoogleMap.animateCamera(CameraUpdateFactory
-                    .newCameraPosition(myPosition));
-
-
+        else{
+            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+            if (mLastLocation != null && mGoogleMap != null) {
+                //place marker at current position
+                //mGoogleMap.clear(); # Use This if you want to refresh the map upon no last location
+                mlatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                Location location = mGoogleMap.getMyLocation();
+                CameraPosition myPosition = new CameraPosition.Builder()
+                        .target(mlatLng).zoom(18).build();
+                mGoogleMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(myPosition));
+            }
+            System.out.println("I set a locationrequest");
+            mLocationRequest = new LocationRequest();
+            mLocationRequest.setInterval(5000); //5 seconds
+            mLocationRequest.setFastestInterval(3000); //3 seconds
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            //mLocationRequest.setSmallestDisplacement(0.1F); //1/10 meter
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            //Focus on current location
+            //TODO: Update default zoom on current location
+            if (mlatLng != null) {
+                CameraPosition setPosition = new CameraPosition.Builder()
+                        .target(mlatLng).zoom(18).build();
+                mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(setPosition));
+            }
         }
 
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(5000); //5 seconds
-        mLocationRequest.setFastestInterval(3000); //3 seconds
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        //mLocationRequest.setSmallestDisplacement(0.1F); //1/10 meter
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        //Focus on current location
-        //TODO: Update default zoom on current location
-        if (mlatLng != null) {
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(mlatLng));
-        }
     }
 
     @Override
@@ -421,30 +398,7 @@ public class MapsActivity extends AppCompatActivity implements
     @Override
     public void onLocationChanged(Location location) {
         //TODO: Remove markers when viewport leaves
-        //place marker at current position
-        //mGoogleMap.clear();
-        /*if (currLocationMarker != null) {
-            currLocationMarker.remove();
-        }*/
         mlatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        /*MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin));
-        markerOptions.position(mlatLng);
-        markerOptions.title("Current Position");
-        currLocationMarker = mGoogleMap.addMarker(markerOptions);*/
-
-        //Toast.makeText(this,"Location Changed",Toast.LENGTH_SHORT).show();
-
-        //Disabled zoom to current position
-        //zoom to current position:
-        /*CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(mlatLng).zoom(14).build();
-
-        mGoogleMap.animateCamera(CameraUpdateFactory
-                .newCameraPosition(cameraPosition));*/
-
-        //If you only need one location, unregister the listener
-        //LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-
     }
     @Override
     protected void onResume(){
@@ -453,14 +407,69 @@ public class MapsActivity extends AppCompatActivity implements
         findViewById(R.id.map).requestFocus();
         if (mlatLng != null && mGoogleMap != null){
             //Focus on current location
-            //TODO: Update default zoom on current location
-            //TODO: Lock screen or make it so that it zooms on something else, basically we can't zoom if mLatLng is null
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(mlatLng).zoom(20).build();
             mGoogleMap.animateCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
         }
 
+    }
+
+    private void requestLocationPermission() {
+        Log.i(TAG, "LOCATION permission has NOT been granted. Requesting permission.");
+
+        // BEGIN_INCLUDE(camera_permission_request)
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)) {
+            // Provide an additional rationale to the user if the permission was not granted
+            // and the user would benefit from additional context for the use of the permission.
+            // For example if the user has previously denied the permission.
+            Log.i(TAG, "Displaying location access rationale to provide additional context.");
+            Snackbar.make(mLayout, R.string.permission_location_rationale,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(MapsActivity.this,
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                    REQUEST_LOCATIONS);
+                        }
+                    })
+                    .show();
+        } else {
+
+            // Camera permission has not been granted yet. Request it directly.
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATIONS);
+        }
+        // END_INCLUDE(camera_permission_request)
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_LOCATIONS) {
+            // BEGIN_INCLUDE(permission_result)
+            // Received permission result for camera permission.
+            Log.i(TAG, "Received response for Camera permission request.");
+
+            // Check if the only required permission has been granted
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Camera permission has been granted, preview can be displayed
+                Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
+                Snackbar.make(mLayout, R.string.permision_available_location,
+                        Snackbar.LENGTH_SHORT).show();
+            } else {
+                Log.i(TAG, "CAMERA permission was NOT granted.");
+                Snackbar.make(mLayout, R.string.permissions_not_granted,
+                        Snackbar.LENGTH_SHORT).show();
+
+            }
+            onMapReady(mGoogleMap);
+        }else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -470,7 +479,7 @@ public class MapsActivity extends AppCompatActivity implements
             //This is for the GET request. TODO: Move this
             mGoogleMap.clear();
             markerArrayList.clear();
-            makeGet = new GetServer(mGoogleMap, context, viewlatitude, viewlongitude);
+            makeGet = new GetServer(mGoogleMap, context, viewlatitude, viewlongitude, range);
             makeGet.execute();
         }
     }
@@ -530,48 +539,3 @@ public class MapsActivity extends AppCompatActivity implements
     }
 
 }
-
-/*
-//Supposed timer to update map after moving, we have a different solution we are currently working on
-System.out.println("About to create callback method");
-        mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-            //Set a listener when map is loaded
-            @Override
-            public void onMapLoaded(){
-                mGoogleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-                    @Override
-                    public void onCameraChange(CameraPosition position) {
-                        LatLngBounds bounds = mGoogleMap.getProjection().getVisibleRegion().latLngBounds;
-                        if ((ne = bounds.northeast) == null) {
-                            sw = bounds.southwest;
-                            if (t != null) {
-                                t.purge();
-                                t.cancel();
-                            }
-                            t = new Timer();
-                            t.schedule(new TimerTask() {
-                                public void run() {
-                                    if (ne1 != ne.latitude && ne2 != ne.longitude && sw1 != sw.latitude && sw2 != sw.longitude) {
-                                        ne1 = ne.latitude;
-                                        ne2 = ne.longitude;
-                                        sw1 = sw.latitude;
-                                        sw2 = sw.longitude;
-                                        System.out.println("Refreshing data");
-                                        new GetServer(mGoogleMap, context).execute();
-                                        t.cancel();
-                                    } else {
-                                        ne1 = ne.latitude;
-                                        ne2 = ne.longitude;
-                                        sw1 = sw.latitude;
-                                        sw2 = sw.longitude;
-                                    }
-                                    t.cancel(); // also just top the timer thread, otherwise, you may receive a crash report
-                                }
-                            }, 1000);
-                            //new DownloadJSON().execute();
-                        }
-                    }
-                });
-            }
-        });
- */

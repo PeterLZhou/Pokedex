@@ -32,7 +32,7 @@ public abstract class MapStateListener {
                 }
             }
         });
-
+        System.out.println("I'm creating a Map State Listener on the fragment " + touchableMapFragment.toString());
         touchableMapFragment.setTouchListener(new TouchableWrapper.OnTouchListener() {
             @Override
             public void onTouch() {
