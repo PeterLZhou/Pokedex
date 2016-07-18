@@ -13,4 +13,5 @@
     <string name="permision_available_location">Location Permission Granted!</string>
     <string name="permissions_not_granted">Permission not granted!</string>
     <string name="reportfakemarker">Report Fake Marker</string>
+    <string name="facebook_app_id">1748912502031767</string>
 </resources>
