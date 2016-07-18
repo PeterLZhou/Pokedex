@@ -24,7 +24,6 @@ import java.net.URL;
  * Created by peterlzhou on 7/11/16.
  */
 public class GetServer extends AsyncTask<Void, Void, Void> {
-    private final String SERVER_URL = "http://pokedex-1.frckmtvvk9.us-west-2.elasticbeanstalk.com";
     private final String LATITUDE_PARAM = "latitude";
     private final String LONGITUDE_PARAM = "longitude";
     private final String RANGE_PARAM = "range";
@@ -69,7 +68,7 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
             result = new StringBuilder();
             //create an Android Uri #Why the fuck are there so many different URIs
             //The lat and lng are related to the viewport and not the current user location
-            android.net.Uri masteruri = Uri.parse(SERVER_URL + "/logs")
+            android.net.Uri masteruri = Uri.parse(MapsActivity.SERVER_URL + "/logs")
                     .buildUpon()
                     .appendQueryParameter(LATITUDE_PARAM, Double.toString(getviewPortLat))
                     .appendQueryParameter(LONGITUDE_PARAM, Double.toString(getviewPortLng))
@@ -120,7 +119,7 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
             //Close that shit
             input.close();
             //This is to test that we have received the input
-            //System.out.println(result.toString());
+            System.out.println(result.toString());
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         } finally{
