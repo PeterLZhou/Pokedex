@@ -42,14 +42,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MapsActivity extends AppCompatActivity implements
-        OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
     public static final String TAG = MapsActivity.class.getSimpleName();
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
@@ -66,8 +68,10 @@ public class MapsActivity extends AppCompatActivity implements
     private DrawerLayout mDrawerLayout;
     public static ListView mDrawerList;
     private View mLayout;
+    Button reportbutton;
     private static final int REQUEST_LOCATIONS = 0;
     public static ArrayList<String> markerArrayList = new ArrayList<String>();
+    public static HashMap<Marker, String> myHashMap = new HashMap<Marker, String>();
     public static final String[] POKEMON = new String[]{
             //NOTE: All Pokemon taking the first position means that the other pokemon will start indexed at 1
             "All Pokémon",
@@ -242,6 +246,7 @@ public class MapsActivity extends AppCompatActivity implements
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+        reportbutton = (Button) findViewById(R.id.false_button);
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -335,6 +340,32 @@ public class MapsActivity extends AppCompatActivity implements
                     new GetServer(mGoogleMap, context, viewlatitude, viewlongitude, range).execute();
                 }
             };
+            mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(final Marker marker) {
+                    System.out.println("I should have touched a marker");
+                    reportbutton.setVisibility(View.VISIBLE);
+                    reportbutton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            System.out.println("You have clicked this dialog");
+                            new FalseServer().execute(myHashMap.get(marker));
+                            reportbutton.setVisibility(View.INVISIBLE);
+                            Toast.makeText(context, "Submitted fake marker report!", Toast.LENGTH_LONG).show();
+
+                        }
+                    });
+                    return false;
+                }
+            });
+            mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    System.out.println("I am not clicking a marker");
+                    reportbutton.setVisibility(View.INVISIBLE);
+
+                }
+            });
             System.out.println("I should have made a mapstate listener by now");
         }
     }

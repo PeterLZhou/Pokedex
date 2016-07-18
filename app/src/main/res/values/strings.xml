@@ -6,10 +6,11 @@
     <string name="drawer_close">close</string>
     <string name="drawer_open">open</string>
     <string name="gotcha">Gotcha!</string>
-    <string name="dialog_title">Enter a Pokémon</string>
+    <string name="dialog_title">What Pokémon Did You Catch?</string>
     <string name="cancel">Cancel</string>
     <string name="permission_location_rationale">PokéMap needs your location to find where you are on the map</string>
     <string name="ok">OK</string>
     <string name="permision_available_location">Location Permission Granted!</string>
     <string name="permissions_not_granted">Permission not granted!</string>
+    <string name="reportfakemarker">Report Fake Marker</string>
 </resources>

@@ -10,11 +10,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+
 /**
  * Created by tommy on 7/12/16.
  */
 public class SplashActivity extends AppCompatActivity {
     private final String TAG = SplashActivity.class.getSimpleName();
+    private final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final int REQUEST_LOCATIONS = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,9 +27,11 @@ public class SplashActivity extends AppCompatActivity {
             requestLocationPermission();
         }
         else {
-            Intent intent = new Intent(this, MapsActivity.class);
-            startActivity(intent);
-            finish();
+            if(checkPlayServices()) {
+                Intent intent = new Intent(this, MapsActivity.class);
+                startActivity(intent);
+                finish();
+            }
         }
     }
 
@@ -76,5 +82,17 @@ public class SplashActivity extends AppCompatActivity {
         }else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    public boolean checkPlayServices(){
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int result = googleAPI.isGooglePlayServicesAvailable(this);
+        if (result != ConnectionResult.SUCCESS){
+            if (googleAPI.isUserResolvableError(result)){
+                googleAPI.getErrorDialog(this, result, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            }
+            return false;
+        }
+        return true;
     }
 }

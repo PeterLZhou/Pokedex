@@ -36,6 +36,19 @@
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="35dp"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:id="@+id/false_button"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="35dp"
+            android:text="@string/reportfakemarker"
+            android:textColor="#FFFFFF"
+            android:visibility="invisible"
+            android:background="@drawable/report_button" />
         <!--TODO: Fix button and EditText position, -->
 
     </RelativeLayout>

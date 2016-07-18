@@ -183,8 +183,9 @@ public class GetServer extends AsyncTask<Void, Void, Void> {
                     markerOptions.title(oneMarker.getString("pokemon_name"));
                     //System.out.println("Pokemonid is " + pokemonid);
                     if (markerOptions != null) {
-                        System.out.println("Fuck you + " + pokemonid);
+                        //System.out.println("Fuck you + " + pokemonid);
                         newMarker = mGoogleMap.addMarker(markerOptions);
+                        MapsActivity.myHashMap.put(newMarker, oneMarker.getString("key"));
                     }
                     else{
                         System.out.println("Pokemonid: " + pokemonid);
