@@ -16,8 +16,6 @@ import java.net.URL;
  * Created by peterlzhou on 7/11/16.
  */
 public class PostServer extends AsyncTask<Capture, Void, Void> {
-
-    private final String SERVER_URL = "http://pokedex-1.frckmtvvk9.us-west-2.elasticbeanstalk.com";
     StringBuilder sb = new StringBuilder();
 
     //TODO: We need to convert the information into the required JSON object
@@ -42,7 +40,7 @@ public class PostServer extends AsyncTask<Capture, Void, Void> {
         HttpURLConnection client = null;
 
         try{
-            URL url = new URL(SERVER_URL + "/log");
+            URL url = new URL(MapsActivity.SERVER_URL + "/log");
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("POST");
             //Not sure how these three lines work yet

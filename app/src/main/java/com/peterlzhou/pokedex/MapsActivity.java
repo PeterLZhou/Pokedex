@@ -52,6 +52,8 @@ import java.util.TimerTask;
 
 public class MapsActivity extends AppCompatActivity implements
         OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
+    //public static final String SERVER_URL = "https://pokedex-master.herokuapp.com";
+    public static final String SERVER_URL = "http://pokedex-1.frckmtvvk9.us-west-2.elasticbeanstalk.com";
     public static final String TAG = MapsActivity.class.getSimpleName();
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;

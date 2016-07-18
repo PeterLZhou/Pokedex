@@ -18,7 +18,6 @@ import java.net.URL;
 
 public class FalseServer extends AsyncTask<String, Void, Void> {
 
-    private final String SERVER_URL = "http://pokedex-1.frckmtvvk9.us-west-2.elasticbeanstalk.com";
     StringBuilder sb = new StringBuilder();
 
     //TODO: We need to convert the information into the required JSON object
@@ -42,7 +41,7 @@ public class FalseServer extends AsyncTask<String, Void, Void> {
         HttpURLConnection client = null;
 
         try{
-            URL url = new URL(SERVER_URL + "/log" + "/" + mFake);
+            URL url = new URL(MapsActivity.SERVER_URL + "/log/" + mFake);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("POST");
             //Not sure how these three lines work yet
@@ -58,7 +57,7 @@ public class FalseServer extends AsyncTask<String, Void, Void> {
             JSONObject node = new JSONObject();
             //Specify the attributes of the JSON object:
             //pokemonName is a string, latitude and longitude are doubles, captureTime is a long in milliseconds
-            node.put("rarity_change", -1);
+            node.put("rating_change", -1);
             //This is for debugging purposes
             //System.out.println(node.toString(4));
             //Open up the output stream so we can write our JSON object into the server
@@ -72,7 +71,7 @@ public class FalseServer extends AsyncTask<String, Void, Void> {
 
             int HttpResult =client.getResponseCode();
             //System.out.println("The response code is " + HttpResult);
-            if(HttpResult ==HttpURLConnection.HTTP_OK){
+            if(HttpResult == HttpURLConnection.HTTP_OK){
                 BufferedReader br = new BufferedReader(new InputStreamReader(
                         client.getInputStream(),"utf-8"));
                 String line = null;
@@ -80,12 +79,16 @@ public class FalseServer extends AsyncTask<String, Void, Void> {
                     sb.append(line + "\n");
                 }
                 br.close();
+                System.out.println(url.toString());
+                System.out.println("It worked!");
 
                 //System.out.println(""+sb.toString());
 
             }else{
+                System.out.println(url.toString());
                 System.out.println("Error " + HttpResult);
                 System.out.println(client.getResponseMessage());
+                System.out.println("NOOOOOOOO!");
             }
         }
         //TODO: Figure out what each exception means

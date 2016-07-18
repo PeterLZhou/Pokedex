@@ -21,8 +21,8 @@ public class TouchableWrapper extends FrameLayout {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        System.out.println("I get to the touch event");
-        System.out.println("Event is " + event.toString());
+        //System.out.println("I get to the touch event");
+        //System.out.println("Event is " + event.toString());
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 myonTouchListener.onTouch();
